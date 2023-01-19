@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class DrivetrainSubsystem extends SubsystemBase {
     private static final double MAX_VOLTAGE = 12.0;
@@ -31,7 +32,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule backLeftModule;
     private final SwerveModule backRightModule;
 
-    private final AHRS gyroscope = new AHRS(SPI.Port.kMXP, (byte) 200);
+    private final AHRS gyroscope = new AHRS(SPI.Port.kMXP);
+
+    public Gyro getGyro() {
+        return gyroscope;
+    }
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
@@ -97,6 +102,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 Constants.BACK_RIGHT_MODULE_STEER_OFFSET
         );
 
+        
+
         odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(gyroscope.getFusedHeading()), new SwerveModulePosition[]{
                 new SwerveModulePosition(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getSteerAngle())),
                 new SwerveModulePosition(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getSteerAngle())),
@@ -141,14 +148,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
         odometry.update(
                 Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
                 new SwerveModulePosition[]{
-                        new SwerveModulePosition(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getSteerAngle())),
-                        new SwerveModulePosition(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getSteerAngle())),
-                        new SwerveModulePosition(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle())),
-                        new SwerveModulePosition(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()))
+                        new SwerveModulePosition(frontLeftModule.getDriveVelocity(), new Rotation2d(Math.toRadians(frontLeftModule.getSteerAngle()))),
+                        new SwerveModulePosition(frontRightModule.getDriveVelocity(), new Rotation2d(Math.toRadians(frontRightModule.getSteerAngle()))),
+                        new SwerveModulePosition(backLeftModule.getDriveVelocity(), new Rotation2d(Math.toRadians(backLeftModule.getSteerAngle()))),
+                        new SwerveModulePosition(backRightModule.getDriveVelocity(), new Rotation2d(Math.toRadians(backRightModule.getSteerAngle())))
                 }
         );
 
+        /*chassisSpeeds = kinematics.toChassisSpeeds(new SwerveModuleState[]{
+                new SwerveModuleState(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getSteerAngle())),
+                new SwerveModuleState(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getSteerAngle())),
+                new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle())),
+                new SwerveModuleState(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()))
+        });*/
+
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+
+        //var frontLeftOptimized = SwerveModuleState.optimize(frontLeftModule,
+           //new Rotation2d(m_turningEncoder.getDistance()));
+
+        
 
         frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
         frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
