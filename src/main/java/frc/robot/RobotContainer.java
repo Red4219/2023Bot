@@ -2,17 +2,20 @@ package frc.robot;
 
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.LimeLightSubSystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 //import edu.wpi.first.wpilibj2.command.button.Button;
 
 public class RobotContainer {
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
+    private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
 
     private final XboxController controller = new XboxController(0);
 
     public RobotContainer() {
         drivetrain.register();
+        limeLight.register();
 
         drivetrain.setDefaultCommand(new DriveCommand(
                 drivetrain,
@@ -27,6 +30,10 @@ public class RobotContainer {
 
     public DrivetrainSubsystem getDrivetrain() {
         return drivetrain;
+    }
+
+    public LimeLightSubSystem getLimeLightSubSystem() {
+        return limeLight;
     }
 
     private static double deadband(double value, double deadband) {
