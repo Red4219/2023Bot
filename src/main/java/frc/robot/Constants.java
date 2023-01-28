@@ -1,5 +1,9 @@
 package frc.robot;
 
+import java.util.HashMap;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
 public class Constants {
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.2794;
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.2794;
@@ -29,4 +33,8 @@ public class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 11;
     //public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(261.71);
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(17);
+
+    public static final HashMap<String, Command> AUTO_EVENT_MAP = new HashMap<>();
+    public static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 1;
+    public static final double AUTO_MAX_SPEED_METERS_PER_SECOND_SQUARED = 1;
 }
