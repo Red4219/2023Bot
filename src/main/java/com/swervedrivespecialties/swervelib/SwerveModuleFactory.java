@@ -1,5 +1,7 @@
 package com.swervedrivespecialties.swervelib;
 
+import com.revrobotics.REVLibError;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
@@ -50,6 +52,31 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         @Override
         public double getDriveVelocity() {
             return driveController.getStateVelocity();
+        }
+
+        @Override
+        public double getPositionConversionFactor() {
+            return driveController.getPositionConversionFactor();
+        }
+
+        @Override
+        public int getCountsPerRevolution() {
+            return driveController.getCountsPerRevolution();
+        }
+
+        @Override
+        public boolean getInverted() {
+            return driveController.getInverted();
+        }
+
+        @Override
+        public double getPosition() {
+            return driveController.getPosition();
+        }
+
+        @Override
+        public REVLibError setVelocityConversionFactor(double factor) {
+            return driveController.setVelocityConversionFactor(factor);
         }
 
         @Override

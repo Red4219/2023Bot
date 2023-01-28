@@ -2,6 +2,7 @@ package com.swervedrivespecialties.swervelib.rev;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.swervedrivespecialties.swervelib.DriveController;
 import com.swervedrivespecialties.swervelib.DriveControllerFactory;
@@ -59,8 +60,8 @@ public final class NeoDriveControllerFactoryBuilder {
             // Setup encoder
             RelativeEncoder encoder = motor.getEncoder();
             double positionConversionFactor = Math.PI * moduleConfiguration.getWheelDiameter() * moduleConfiguration.getDriveReduction();
-            encoder.setPositionConversionFactor(positionConversionFactor);
-            encoder.setVelocityConversionFactor(positionConversionFactor / 60.0);
+            //encoder.setPositionConversionFactor(positionConversionFactor);
+            //encoder.setVelocityConversionFactor(positionConversionFactor / 60.0);
 
             return new ControllerImplementation(motor, encoder);
         }
@@ -72,7 +73,8 @@ public final class NeoDriveControllerFactoryBuilder {
 
         private ControllerImplementation(CANSparkMax motor, RelativeEncoder encoder) {
             this.motor = motor;
-            this.encoder = encoder;
+            //this.encoder = encoder;
+            this.encoder = motor.getEncoder();
         }
 
         @Override
@@ -83,6 +85,31 @@ public final class NeoDriveControllerFactoryBuilder {
         @Override
         public double getStateVelocity() {
             return encoder.getVelocity();
+        }
+
+        @Override
+        public double getPositionConversionFactor() {
+            return encoder.getPositionConversionFactor();
+        }
+
+        @Override
+        public int getCountsPerRevolution() {
+            return encoder.getCountsPerRevolution();
+        }
+
+        @Override
+        public boolean getInverted() {
+            return encoder.getInverted();
+        }
+
+        @Override
+        public double getPosition() {
+            return encoder.getPosition();
+        }
+
+        @Override
+        public REVLibError setVelocityConversionFactor(double factor) {
+            return encoder.setVelocityConversionFactor(factor);
         }
     }
 }
