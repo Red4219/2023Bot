@@ -29,6 +29,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -46,11 +47,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     LimeLightSubSystem limelight = new LimeLightSubSystem();
     SwerveModuleState[] states = new SwerveModuleState[4];
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
 
-    //Pose2d currentPose = new Pose2d();
+    XboxController driverController;
 
     public Gyro getGyro() {
         return gyroscope;
+    }
+
+    public void setDriverController(XboxController controller) {
+        this.driverController = controller;
     }
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -59,12 +65,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
             new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0)
     );
-    /*private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, Rotation2d.fromDegrees(gyroscope.getFusedHeading()), new SwerveModulePosition[]{
-        new SwerveModulePosition(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getSteerAngle())),
-        new SwerveModulePosition(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getSteerAngle())),
-        new SwerveModulePosition(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle())),
-        new SwerveModulePosition(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()))
-    });*/
 
     private final SwerveDriveOdometry odometry;
 
@@ -117,17 +117,25 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 Constants.BACK_RIGHT_MODULE_STEER_OFFSET
         );
 
-        //frontLeftModule.
+        // Create the initial versions of the SwerveModulePositions
+        // They will just be updated in the future during teleop and autonomous
+        swerveModulePositions[0] = new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle()));
+        swerveModulePositions[1] = new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle()));        
+        swerveModulePositions[2] = new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle()));      
+        swerveModulePositions[3] = new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()));      
 
         odometry = new SwerveDriveOdometry(
                 kinematics, 
                 Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
+                //swerveModulePositions,
                 new SwerveModulePosition[]{
                         new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
                         new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
                         new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
                         new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
-            }, new Pose2d(0, 0, gyroscope.getRotation2d()));
+            },
+             new Pose2d(0, 0, gyroscope.getRotation2d())
+        );
 
         System.out.println("----------> just created the odometry, poseX is: " + odometry.getPoseMeters().getX() + ", poseY is: " + odometry.getPoseMeters().getY());
 
@@ -141,27 +149,63 @@ public class DrivetrainSubsystem extends SubsystemBase {
         shuffleboardTab.addNumber("BR Velocity", () -> backRightModule.getDriveVelocity());
     }
 
+    public LimeLightSubSystem getLimeLight() {
+        return this.limelight;
+    }
+
     public Pose2d getPose() {
-        System.out.println("-----------------> getPose called, x: " + odometry.getPoseMeters().getX() + ", y: " + odometry.getPoseMeters().getY());
+        //System.out.println("-----------------> getPose called, x: " + odometry.getPoseMeters().getX() + ", y: " + odometry.getPoseMeters().getY());
         return odometry.getPoseMeters();
     }
 
     public void setPose(Pose2d pose) {
         System.out.println("-----------------> setPose called x: " + pose.getX() + ", y: " + pose.getY());
-        odometry.resetPosition(pose.getRotation(), 
+
+        /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
+        swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
+
+        swerveModulePositions[1].distanceMeters = frontRightModule.getPosition();        
+        swerveModulePositions[1].angle = new Rotation2d(frontRightModule.getSteerAngle());
+
+        swerveModulePositions[2].distanceMeters = backLeftModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backLeftModule.getSteerAngle());
+
+        swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());*/
+
+        odometry.resetPosition(
+                //pose.getRotation(),
+                gyroscope.getRotation2d(),
+                //swerveModulePositions,
         new SwerveModulePosition[]{
                 new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
                 new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
                 new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
                 new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
             },
-        pose);
+                pose
+        );
     }
 
     public void resetPose() {
         System.out.println("------------------> resetPose() called");
+
+        /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
+        swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
+
+        swerveModulePositions[1].distanceMeters = frontRightModule.getPosition();        
+        swerveModulePositions[1].angle = new Rotation2d(frontRightModule.getSteerAngle());
+
+        swerveModulePositions[2].distanceMeters = backLeftModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backLeftModule.getSteerAngle());
+
+        swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());*/
+
         odometry.resetPosition(
-                Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
+                //Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
+                gyroscope.getRotation2d(),
+                //swerveModulePositions,
                 new SwerveModulePosition[]{
                         new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
                         new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
@@ -172,9 +216,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public SwerveDriveKinematics getKinimatics() {
-
-        System.out.println("----------------->getKinimatics() called");
-
         return this.kinematics;
     }
 
@@ -193,121 +234,84 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 new Pose2d(odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
                 Rotation2d.fromDegrees(gyroscope.getFusedHeading())
         );*/
-        /*odometry.resetPosition(
+
+        swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
+        swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
+
+        swerveModulePositions[1].distanceMeters = frontRightModule.getPosition();        
+        swerveModulePositions[1].angle = new Rotation2d(frontRightModule.getSteerAngle());
+
+        swerveModulePositions[2].distanceMeters = backLeftModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backLeftModule.getSteerAngle());
+
+        swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());
+
+        gyroscope.reset();
+
+        odometry.resetPosition(
                 //Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
                 gyroscope.getRotation2d(),
-                new SwerveModulePosition[]{},
+                swerveModulePositions,
                 new Pose2d(
                         odometry.getPoseMeters().getTranslation(), 
                         Rotation2d.fromDegrees(gyroscope.getFusedHeading())
                 )
-        );*/
+        );
     }
 
     public Rotation2d getRotation() {
-        //return odometry.getPoseMeters().getRotation();
-        return gyroscope.getRotation2d();
+        return odometry.getPoseMeters().getRotation();
+        //return gyroscope.getRotation2d();
     }
 
     public void drive(ChassisSpeeds chassisSpeeds) {
+        //System.out.println("---------------------> drive called");
         this.chassisSpeeds = chassisSpeeds;
     }
 
     @Override
     public void periodic() {
-        /*odometry.update(Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
-                new SwerveModuleState(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getSteerAngle())),
-                new SwerveModuleState(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getSteerAngle())),
-                new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle())),
-                new SwerveModuleState(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()))
-        );*/
 
-        //System.out.println("gyro is: " + gyroscope.getFusedHeading());
+        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_DISABLE_LED)) {
+                limelight.toggleLED();
+        }
 
+        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_RESET_GYRO)) {
+                //zeroGyroscope();
+        }
+        
         limelight.periodic();
         double[] limelightpose = limelight.getBotPose();
 
-        //odometry.resetPosition(gyroscope.getRotation2d(), null, Pose2d);
-        //Pose2d limelight_pose = new Pose2d(limelightpose[0], limelightpose[1], gyroscope.getRotation2d());
+        /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
+        swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
 
-        /*odometry.resetPosition(gyroscope.getRotation2d(),
-        new SwerveModulePosition[]{
-                new SwerveModulePosition(frontLeftModule.getDriveVelocity(), new Rotation2d(Math.toRadians(frontLeftModule.getSteerAngle()))),
-                new SwerveModulePosition(frontRightModule.getDriveVelocity(), new Rotation2d(Math.toRadians(frontRightModule.getSteerAngle()))),
-                new SwerveModulePosition(backLeftModule.getDriveVelocity(), new Rotation2d(Math.toRadians(backLeftModule.getSteerAngle()))),
-                new SwerveModulePosition(backRightModule.getDriveVelocity(), new Rotation2d(Math.toRadians(backRightModule.getSteerAngle())))
-        },
-        limelight_pose);*/
+        swerveModulePositions[1].distanceMeters = frontRightModule.getPosition();        
+        swerveModulePositions[1].angle = new Rotation2d(frontRightModule.getSteerAngle());
 
-        //System.out.println("getDriveVelocity: " + frontLeftModule.getDriveVelocity());
-        //System.out.println("getDriveVelocity: " + frontRightModule.getDriveVelocity());
-        //System.out.println("getDriveVelocity: " + backLeftModule.getDriveVelocity());
-        //System.out.println("getDriveVelocity: " + backRightModule.getDriveVelocity());
+        swerveModulePositions[2].distanceMeters = backLeftModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backLeftModule.getSteerAngle());
 
-        //frontLeftModule.
+        swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
+        swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());*/
 
         odometry.update(
-                Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
-                //gyroscope.getRotation2d(),
-                //getRotation(),
+                gyroscope.getRotation2d(),
+                //swerveModulePositions
                 new SwerveModulePosition[]{
                         new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
-                        //new SwerveModulePosition(Math.abs(frontLeftModule.getDriveVelocity()), new Rotation2d(frontLeftModule.getSteerAngle())),
                         new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
-                        //new SwerveModulePosition(Math.abs(frontRightModule.getDriveVelocity()), new Rotation2d(frontRightModule.getSteerAngle())),
                         new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
-                        //new SwerveModulePosition(Math.abs(backLeftModule.getDriveVelocity()), new Rotation2d(backLeftModule.getSteerAngle())),
                         new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
-                        //new SwerveModulePosition(Math.abs(backRightModule.getDriveVelocity()), new Rotation2d(backRightModule.getSteerAngle()))
                 }
         );
 
-        //currentPose =  currentPose.minus(newPose);
-        //currentPose = new Pose2d(currentPose.minus(newPose).getTranslation(), currentPose.minus(newPose).getTranslation().getAngle());
-
-        
-
-        //currentPose = currentPose.plus(newPose.getTranslation().);
-        //edu.wpi.first.math.geometry.Transform2d transform2d = new Transform2d();
-
         this.states = kinematics.toSwerveModuleStates(chassisSpeeds);
-
-        /*this.currentPose = odometry.update(
-                //Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
-                //gyroscope.getRotation2d(),
-                getRotation(),
-                new SwerveModulePosition[]{
-                        new SwerveModulePosition(states[0].speedMetersPerSecond, new Rotation2d(states[0].angle.getRadians())),
-                        new SwerveModulePosition(states[1].speedMetersPerSecond, new Rotation2d(states[1].angle.getRadians())),
-                        new SwerveModulePosition(states[2].speedMetersPerSecond, new Rotation2d(states[2].angle.getRadians())),
-                        new SwerveModulePosition(states[3].speedMetersPerSecond, new Rotation2d(states[3].angle.getRadians())),
-                }
-        );*/
-
-        /*chassisSpeeds = kinematics.toChassisSpeeds(new SwerveModuleState[]{
-                new SwerveModuleState(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getSteerAngle())),
-                new SwerveModuleState(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getSteerAngle())),
-                new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle())),
-                new SwerveModuleState(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()))
-        });*/
-
-        //SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
-        
-
-        //var frontLeftOptimized = SwerveModuleState.optimize(frontLeftModule,
-           //new Rotation2d(m_turningEncoder.getDistance()));
 
         frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
         frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
         backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
         backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
     }
-
-    private double nativeUnitsToDistanceMeters(double sensorCounts){
-        double motorRotations = (double)sensorCounts / 2048;
-        double wheelRotations = motorRotations / 8.14/1;
-        double positionMeters = wheelRotations * (2 * Math.PI * (2 * 0.0254));
-        return positionMeters;
-      }
-
 }
