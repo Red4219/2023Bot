@@ -41,4 +41,13 @@ public class Constants {
 
     public static final int DRIVER_BUTTON_DISABLE_LED = DRIVER_BUTTON_A;
     public static final int DRIVER_BUTTON_RESET_GYRO = DRIVER_BUTTON_X;
+    public static final int DRIVER_BUTTON_TOGGLE_FIELD_ORIENTED = DRIVER_BUTTON_Y;
+    public static final int DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION = DRIVER_BUTTON_B;
+
+    public static final int OPERATOR_BUTTON_A = 1;
+    public static final int OPERATOR_BUTTON_B = 2;
+    public static final int OPERATOR_BUTTON_X = 3;
+    public static final int OPERATOR_BUTTON_Y = 4;
+    public static final int OPERATOR_LEFT_BUMPER = 5;
+    public static final int OPERATOR_RIGHT_BUMPER = 6;   
 }
