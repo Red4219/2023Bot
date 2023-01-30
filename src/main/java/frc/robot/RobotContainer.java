@@ -45,6 +45,8 @@ public class RobotContainer {
                 () -> -modifyAxis(controller.getRightX())
         ));
 
+        drivetrain.setDriverController(controller);
+
         //new Button(controller::getBackButtonPressed)
                 //.whenPressed(drivetrain::zeroGyroscope);
 
@@ -92,21 +94,24 @@ public class RobotContainer {
                 frc.robot.Constants.AUTO_MAX_SPEED_METERS_PER_SECOND_SQUARED);*/
 
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(
-            "FullAuto", 
-            new PathConstraints(2.0, 2.0)
+            "TestPath1", 
+            new PathConstraints(0.5, 0.5)
         );
 
         HashMap<String, Command> eventMap = new HashMap<>();
-        //eventMap.put("marker1", new PrintCommand("Passed marker 1"));
+        eventMap.put("event1", new PrintCommand("Passed marker 1"));
         //eventMap.put("intakeDown", new IntakeDown());
+
+        
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             drivetrain::getPose,
             drivetrain::setPose,
-            drivetrain.getKinimatics(), 
-            new PIDConstants(5.0, 0.0, 0.0), 
-            new PIDConstants(0.5, 0.0, 0.0), 
-            drivetrain::setModuleStates, 
+            //drivetrain.getKinimatics(), 
+            new PIDConstants(0.0, 0.0, 0.0), 
+            new PIDConstants(0.0, 0.0, 0.0),
+            drivetrain::drive, 
+            //drivetrain::setModuleStates,
             eventMap, 
             false,
             drivetrain

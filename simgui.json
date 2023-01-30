@@ -33,6 +33,11 @@
     }
   },
   "NetworkTables Info": {
+    "Server": {
+      "Publishers": {
+        "open": true
+      }
+    },
     "shuffleboard": {
       "Publishers": {
         "open": true
