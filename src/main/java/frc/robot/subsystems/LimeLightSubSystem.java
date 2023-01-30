@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -73,8 +74,8 @@ public class LimeLightSubSystem extends SubsystemBase {
         }
     }
 
-    public double[] getBotPose() {
-        return botpose_array;
+    public Pose3d getBotPose() {
+        return this.pose;
     }
 
     public boolean toggleLED() {

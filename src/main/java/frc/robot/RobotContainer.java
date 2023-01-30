@@ -95,7 +95,7 @@ public class RobotContainer {
 
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(
             "TestPath1", 
-            new PathConstraints(0.5, 0.5)
+            new PathConstraints(1.0, 1.0)
         );
 
         HashMap<String, Command> eventMap = new HashMap<>();
