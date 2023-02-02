@@ -18,14 +18,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class LimeLightSubSystem extends SubsystemBase {
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-
-    NetworkTable botpose_wpiblue = NetworkTableInstance.getDefault().getTable("botpose_wpiblue");
-    NetworkTable botpose_wpired = NetworkTableInstance.getDefault().getTable("botpose_wpired");
-
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry ty = table.getEntry("ty");
     NetworkTableEntry ta = table.getEntry("ta");
+    NetworkTableEntry tv = table.getEntry("tv");
+    NetworkTableEntry tl = table.getEntry("tl");
     NetworkTableEntry botpose = table.getEntry("botpose");
+    NetworkTableEntry botpose_wpiblue = table.getEntry("botpose_wpiblue");
+    NetworkTableEntry botpose_wpired = table.getEntry("botpose_wpired");
     ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Limelight");
 
     double tempX = 0.0;
@@ -41,6 +41,7 @@ public class LimeLightSubSystem extends SubsystemBase {
     boolean canSeeAprilTags = false;
 
     double x, y, area = 0.0;
+    long v, latency = 0;
     double[] botpose_array = new double[6];
 
     double ledOff = 1;
@@ -63,6 +64,7 @@ public class LimeLightSubSystem extends SubsystemBase {
         shuffleboardTab.addDouble("pose Y", () -> pose.getY());
         shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.102:5800");
         shuffleboardTab.addBoolean("April Tags", () -> canSeeAprilTags);
+        shuffleboardTab.addInteger("Latency", () -> latency);
 
         //SmartDashboard.putBoolean("April Tag Visible", canSeeAprilTags);
     }
@@ -72,14 +74,17 @@ public class LimeLightSubSystem extends SubsystemBase {
         //read values periodically
         x = table.getEntry("tx").getDouble(0.0);
         y = table.getEntry("ty").getDouble(0.0);
+        v = table.getEntry("tv").getInteger(0);
+        latency = table.getEntry("tl").getInteger(0);
         area = table.getEntry("ta").getDouble(0.0);
         botpose_array = table.getEntry("botpose").getDoubleArray(botpose_array);
 
         //System.out.println("length: " + botpose_array.length);
 
         // this is needed when the limelight can't see any april tags and loses its pose
-        if(botpose_array.length <= 0) {
-            //botpose_array = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        //if(botpose_array.length <= 0) {
+        if(v == 0) {
+            botpose_array = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
             canSeeAprilTags = false;
         } else {
 
