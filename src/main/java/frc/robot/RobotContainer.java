@@ -35,7 +35,7 @@ public class RobotContainer {
     private final XboxController controller = new XboxController(0);
 
     public RobotContainer() {
-        drivetrain.register();
+        //drivetrain.register();
         //limeLight.register();
 
         drivetrain.setDefaultCommand(new DriveCommand(

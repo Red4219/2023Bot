@@ -6,6 +6,9 @@ import frc.robot.commands.DriveCommand;
 
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -18,6 +21,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -49,13 +54,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     LimeLightSubSystem limelight = new LimeLightSubSystem();
     SwerveModuleState[] states = new SwerveModuleState[4];
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
-
+    private final Field2d field = new Field2d();
     XboxController driverController;
     XboxController operatorController;
-
     boolean useLimeLightForPoseCorrection = false;
-
     DriveCommand driveCommand;
+    //private final SwerveDriveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
+    private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+
+    private double tempX = 3;
+    private double tempY = 5;
+    private double tempDegrees = 180;
 
     public Gyro getGyro() {
         return gyroscope;
@@ -93,12 +103,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0)
     );
 
-    private final SwerveDriveOdometry odometry;
-
-    private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-
     public DrivetrainSubsystem() {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+        
 
         frontLeftModule = Mk3SwerveModuleHelper.createNeo(
                 shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
@@ -151,7 +158,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         swerveModulePositions[2] = new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle()));      
         swerveModulePositions[3] = new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()));      
 
-        odometry = new SwerveDriveOdometry(
+        //odometry = new SwerveDriveOdometry(
+        poseEstimator = new SwerveDrivePoseEstimator(
                 kinematics, 
                 Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
                 //swerveModulePositions,
@@ -161,14 +169,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
                         new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
             },
-             new Pose2d(0, 0, gyroscope.getRotation2d())
+             new Pose2d(0, 0, 
+             gyroscope.getRotation2d())
         );
 
-        System.out.println("----------> just created the odometry, poseX is: " + odometry.getPoseMeters().getX() + ", poseY is: " + odometry.getPoseMeters().getY());
+        //System.out.println("----------> just created the odometry, poseX is: " + odometry.getPoseMeters().getX() + ", poseY is: " + odometry.getPoseMeters().getY());
 
         shuffleboardTab.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
-        shuffleboardTab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
-        shuffleboardTab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
+        //shuffleboardTab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
+        shuffleboardTab.addNumber("Pose X", () -> poseEstimator.getEstimatedPosition().getX());
+        //shuffleboardTab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
+        shuffleboardTab.addNumber("Pose Y", () -> poseEstimator.getEstimatedPosition().getY());
 
         shuffleboardTab.addNumber("FL Velocity", () -> frontLeftModule.getDriveVelocity());
         shuffleboardTab.addNumber("FR Velocity", () -> frontRightModule.getDriveVelocity());
@@ -177,6 +188,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         shuffleboardTab.addBoolean("Field Oriented", () -> this.driveCommand.getFieldOriented());
         shuffleboardTab.addBoolean("LimeLight Field Correction", () -> this.useLimeLightForPoseCorrection);
+
+        SmartDashboard.putData(field);
+
+        setPose(
+                new Pose2d(
+                        new Translation2d(tempX, tempY), 
+                        Rotation2d.fromDegrees(tempDegrees)
+                )
+        );
     }
 
     public LimeLightSubSystem getLimeLight() {
@@ -185,11 +205,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Pose2d getPose() {
         //System.out.println("-----------------> getPose called, x: " + odometry.getPoseMeters().getX() + ", y: " + odometry.getPoseMeters().getY());
-        return odometry.getPoseMeters();
+        //return odometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
     }
 
     public void setPose(Pose2d pose) {
-        System.out.println("-----------------> setPose called x: " + pose.getX() + ", y: " + pose.getY());
+        //System.out.println("-----------------> setPose called x: " + pose.getX() + ", y: " + pose.getY());
 
         /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
         swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
@@ -203,7 +224,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
         swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
         swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());*/
 
-        odometry.resetPosition(
+        /*odometry.resetPosition(
+                //pose.getRotation(),
+                gyroscope.getRotation2d(),
+                //swerveModulePositions,
+        new SwerveModulePosition[]{
+                new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
+                new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
+                new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
+                new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
+            },
+                pose
+        );*/
+
+        poseEstimator.resetPosition(
                 //pose.getRotation(),
                 gyroscope.getRotation2d(),
                 //swerveModulePositions,
@@ -232,7 +266,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
         swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());*/
 
-        odometry.resetPosition(
+        //odometry.resetPosition(
+        poseEstimator.resetPosition(
                 //Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
                 gyroscope.getRotation2d(),
                 //swerveModulePositions,
@@ -279,19 +314,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         gyroscope.reset();
 
-        odometry.resetPosition(
+        //odometry.resetPosition(
+        poseEstimator.resetPosition(
                 //Rotation2d.fromDegrees(gyroscope.getFusedHeading()),
                 gyroscope.getRotation2d(),
                 swerveModulePositions,
                 new Pose2d(
-                        odometry.getPoseMeters().getTranslation(), 
+                        //odometry.getPoseMeters().getTranslation(),
+                        poseEstimator.getEstimatedPosition().getTranslation(),
                         Rotation2d.fromDegrees(gyroscope.getFusedHeading())
                 )
         );
     }
 
     public Rotation2d getRotation() {
-        return odometry.getPoseMeters().getRotation();
+        //return odometry.getPoseMeters().getRotation();
+        return poseEstimator.getEstimatedPosition().getRotation();
         //return gyroscope.getRotation2d();
     }
 
@@ -326,7 +364,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 }
         }
                 
-        if(this.useLimeLightForPoseCorrection) {
+        /*if(this.useLimeLightForPoseCorrection) {
                 if(limelight.canSeeAprilTags()) {
                         odometry.resetPosition(
                                 gyroscope.getRotation2d(), 
@@ -339,23 +377,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
                                 limelight.getBotPose().toPose2d()
                         );
                 }
-        }
+        }*/
 
-        
-
-        /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
-        swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
-
-        swerveModulePositions[1].distanceMeters = frontRightModule.getPosition();        
-        swerveModulePositions[1].angle = new Rotation2d(frontRightModule.getSteerAngle());
-
-        swerveModulePositions[2].distanceMeters = backLeftModule.getPosition();        
-        swerveModulePositions[3].angle = new Rotation2d(backLeftModule.getSteerAngle());
-
-        swerveModulePositions[3].distanceMeters = backRightModule.getPosition();        
-        swerveModulePositions[3].angle = new Rotation2d(backRightModule.getSteerAngle());*/
-
-        odometry.update(
+        //odometry.update(
+        poseEstimator.update(
                 gyroscope.getRotation2d(),
                 //swerveModulePositions
                 new SwerveModulePosition[]{
@@ -365,6 +390,31 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
                 }
         );
+
+        if(limelight.canSeeAprilTags() && useLimeLightForPoseCorrection) {
+                //System.out.println("we are correcting");
+                poseEstimator.addVisionMeasurement(limelight.getBotPose().toPose2d(), limelight.getTimeStamp());
+        }
+
+        //field.setRobotPose(odometry.getPoseMeters());
+        field.setRobotPose(poseEstimator.getEstimatedPosition());
+
+        //tempX += 0.01;
+        //tempY += 0.01;
+
+        //System.out.println("x: " + tempX + ", y: " + tempY );
+
+        /*this.setPose(
+                new Pose2d(
+                        new Translation2d(tempX, tempY), 
+                        Rotation2d.fromDegrees(tempDegrees)
+                )
+        );*/
+
+        var p = poseEstimator.getEstimatedPosition();
+        //System.out.println("x: " + p.getX() + ", y: " + p.getY() + ", rotation: " + p.getRotation().getDegrees());
+
+        //field.getObject("LimeLight").setPose(limelight.getBotPose().toPose2d());
 
         this.states = kinematics.toSwerveModuleStates(chassisSpeeds);
 
