@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 
 import frc.robot.Constants;
+import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.DriveCommand;
 
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
@@ -23,6 +24,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -51,7 +54,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private final AHRS gyroscope = new AHRS(SPI.Port.kMXP);
 
-    LimeLightSubSystem limelight = new LimeLightSubSystem();
+    //LimeLightSubSystem limelight = new LimeLightSubSystem();
+    LimeLightSubSystem limelight;
     SwerveModuleState[] states = new SwerveModuleState[4];
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     private final Field2d field = new Field2d();
@@ -66,6 +70,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double tempX = 3;
     private double tempY = 5;
     private double tempDegrees = 180;
+
+    private boolean autoAiming = false;
 
     public Gyro getGyro() {
         return gyroscope;
@@ -87,8 +93,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return this.operatorController;
     }
 
-    public void setDriveCommand(DriveCommand driveCommand) {
-        this.driveCommand = driveCommand;
+    //public void setDriveCommand(DriveCommand driveCommand) {
+    public void setDriveCommand(Command command) {
+        if(command instanceof DriveCommand ) {
+                this.driveCommand = (DriveCommand) command;
+        } else if(command instanceof AutoAimCommand) {
+                
+        }
     }
 
     public void setControllers(XboxController driver, XboxController operator) {
@@ -201,6 +212,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public LimeLightSubSystem getLimeLight() {
         return this.limelight;
+    }
+
+    public void setLimeLight(LimeLightSubSystem limelight) {
+        this.limelight = limelight;
     }
 
     public Pose2d getPose() {
@@ -363,21 +378,36 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         this.useLimeLightForPoseCorrection = true;
                 }
         }
-                
-        /*if(this.useLimeLightForPoseCorrection) {
-                if(limelight.canSeeAprilTags()) {
-                        odometry.resetPosition(
-                                gyroscope.getRotation2d(), 
-                                new SwerveModulePosition[]{
-                                        new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
-                                        new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
-                                        new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
-                                        new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
-                                }, 
-                                limelight.getBotPose().toPose2d()
-                        );
-                }
-        }*/
+
+        
+        // Check for auto aim
+        if(this.driverController.getRightTriggerAxis() > 0) {
+
+            double temp = this.driverController.getRightTriggerAxis();
+
+            System.out.println(temp);
+            
+            //if(!autoAiming) {
+                AutoAimCommand autoAimCommand = new AutoAimCommand(
+                        this, 
+                        () -> this.limelight.getTargetX(), 
+                        () -> this.limelight.getTargetY(),
+                        () -> this.limelight.getTargetRotation()
+                );
+
+                autoAimCommand.execute();
+            //}
+
+            autoAiming = true;
+        } else {
+                autoAiming = false;
+        }
+
+        if(limelight.canSeeAprilTags() && useLimeLightForPoseCorrection) {
+                //System.out.println("we are correcting");
+                //poseEstimator.addVisionMeasurement(limelight.getBotPose().toPose2d(), limelight.getTimeStamp());
+                poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), limelight.getTimeStamp());
+        }
 
         //odometry.update(
         poseEstimator.update(
@@ -391,31 +421,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 }
         );
 
-        if(limelight.canSeeAprilTags() && useLimeLightForPoseCorrection) {
-                //System.out.println("we are correcting");
-                poseEstimator.addVisionMeasurement(limelight.getBotPose().toPose2d(), limelight.getTimeStamp());
-        }
-
         //field.setRobotPose(odometry.getPoseMeters());
         field.setRobotPose(poseEstimator.getEstimatedPosition());
-
-        //tempX += 0.01;
-        //tempY += 0.01;
-
-        //System.out.println("x: " + tempX + ", y: " + tempY );
-
-        /*this.setPose(
-                new Pose2d(
-                        new Translation2d(tempX, tempY), 
-                        Rotation2d.fromDegrees(tempDegrees)
-                )
-        );*/
-
         var p = poseEstimator.getEstimatedPosition();
-        //System.out.println("x: " + p.getX() + ", y: " + p.getY() + ", rotation: " + p.getRotation().getDegrees());
-
-        //field.getObject("LimeLight").setPose(limelight.getBotPose().toPose2d());
-
         this.states = kinematics.toSwerveModuleStates(chassisSpeeds);
 
         frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());

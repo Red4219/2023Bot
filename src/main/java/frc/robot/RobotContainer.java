@@ -1,6 +1,8 @@
 package frc.robot;
 
+import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.AutoAutoAimCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLightSubSystem;
 
@@ -27,28 +29,29 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class RobotContainer {
-    //private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
+    private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
     SendableChooser<Command> chooser = new SendableChooser<>();
-    
-
     private final XboxController controller = new XboxController(0);
+
+    private DriveCommand driveCommand; 
 
     public RobotContainer() {
         //drivetrain.register();
         //limeLight.register();
 
-        drivetrain.setDefaultCommand(new DriveCommand(
-                drivetrain,
-                () -> -modifyAxis(controller.getLeftY()), // Axes are flipped here on purpose
-                () -> -modifyAxis(controller.getLeftX()),
-                () -> -modifyAxis(controller.getRightX())
-        ));
+        drivetrain.setLimeLight(limeLight);
+
+        driveCommand = new DriveCommand(
+            drivetrain,
+            () -> -modifyAxis(controller.getLeftY()), // Axes are flipped here on purpose
+            () -> -modifyAxis(controller.getLeftX()),
+            () -> -modifyAxis(controller.getRightX())
+        );
+
+        drivetrain.setDefaultCommand(driveCommand);
 
         drivetrain.setDriverController(controller);
-
-        //new Button(controller::getBackButtonPressed)
-                //.whenPressed(drivetrain::zeroGyroscope);
 
         configureAutoCommands();
     }
@@ -57,9 +60,9 @@ public class RobotContainer {
         return drivetrain;
     }
 
-    /*public LimeLightSubSystem getLimeLightSubSystem() {
+    public LimeLightSubSystem getLimeLightSubSystem() {
         return limeLight;
-    }*/
+    }
 
     private static double deadband(double value, double deadband) {
         if (Math.abs(value) > deadband) {
@@ -84,25 +87,20 @@ public class RobotContainer {
     }
 
     public void configureAutoCommands() {
-        //frc.robot.Constants.AUTO_EVENT_MAP.put("event 1", new PrintCommand("passed marker 1"));
-        //frc.robot.Constants.AUTO_EVENT_MAP.put("event 2", new PrintCommand("passed marker 2"));
-
-        //build auth paths
-        /*List<PathPlannerTrajectory> auto1Paths = 
-                PathPlanner.loadPathGroup("testPaths1",
-                frc.robot.Constants.AUTO_MAX_SPEED_METERS_PER_SECOND,
-                frc.robot.Constants.AUTO_MAX_SPEED_METERS_PER_SECOND_SQUARED);*/
-
+        
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(
             "TestPath1", 
             new PathConstraints(1.0, 1.0)
         );
 
         HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("event1", new PrintCommand("Passed marker 1"));
-        //eventMap.put("intakeDown", new IntakeDown());
-
-        
+        //eventMap.put("event1", new PrintCommand("Passed marker 1"));
+        eventMap.put("event1", new AutoAutoAimCommand(
+            drivetrain, 
+            () -> this.limeLight.getTargetX(), 
+            () -> this.limeLight.getTargetY(), 
+            () -> this.limeLight.getTargetRotation()
+        ));
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             drivetrain::getPose,

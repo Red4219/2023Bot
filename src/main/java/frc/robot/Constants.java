@@ -49,5 +49,8 @@ public class Constants {
     public static final int OPERATOR_BUTTON_X = 3;
     public static final int OPERATOR_BUTTON_Y = 4;
     public static final int OPERATOR_LEFT_BUMPER = 5;
-    public static final int OPERATOR_RIGHT_BUMPER = 6;   
+    public static final int OPERATOR_RIGHT_BUMPER = 6;
+
+    public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
+    public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
 }
