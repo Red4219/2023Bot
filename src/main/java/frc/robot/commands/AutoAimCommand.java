@@ -54,7 +54,7 @@ public class AutoAimCommand extends CommandBase {
     @Override
     public void execute() {
 
-        System.out.println("AutoAimCommand called");
+        //System.out.println("AutoAimCommand called");
 
         /*if(translationXSupplier.getAsDouble() < 0.0) {
             System.out.println("need to rotate to the left");

@@ -102,6 +102,13 @@ public class RobotContainer {
             () -> this.limeLight.getTargetRotation()
         ));
 
+        eventMap.put("event2", new AutoAutoAimCommand(
+            drivetrain, 
+            () -> this.limeLight.getTargetX(), 
+            () -> this.limeLight.getTargetY(), 
+            () -> this.limeLight.getTargetRotation()
+        ));
+
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             drivetrain::getPose,
             drivetrain::setPose,

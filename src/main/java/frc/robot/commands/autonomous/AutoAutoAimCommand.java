@@ -91,7 +91,10 @@ public class AutoAutoAimCommand extends CommandBase {
             0.0,
             0.0,
             -(translationXSupplier.getAsDouble() * .1)
+            //java.lang.Math.toRadians(-(translationXSupplier.getAsDouble() * .1))
         ));
+
+        drivetrain.periodic();
     }
 
     @Override
@@ -105,8 +108,11 @@ public class AutoAutoAimCommand extends CommandBase {
     public boolean isFinished() {
 
         double targetX = translationXSupplier.getAsDouble();
-        
+
+        //
+
         if(targetX >= Constants.VISION_REFLECTIVE_THRESHOLD_MIN && targetX <= Constants.VISION_REFLECTIVE_THRESHOLD_MAX) {
+            System.out.println("Hit threshold isFinished() targetX: " + targetX);
             return true;
         }
         

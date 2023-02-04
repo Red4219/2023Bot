@@ -385,7 +385,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
             double temp = this.driverController.getRightTriggerAxis();
 
-            System.out.println(temp);
+            //System.out.println(temp);
             
             //if(!autoAiming) {
                 AutoAimCommand autoAimCommand = new AutoAimCommand(
