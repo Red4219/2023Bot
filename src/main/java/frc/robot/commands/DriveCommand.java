@@ -51,8 +51,8 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double translationXPercent = translationXSupplier.getAsDouble();
-        double translationYPercent = translationYSupplier.getAsDouble();
+        double translationXPercent = -translationXSupplier.getAsDouble();
+        double translationYPercent = -translationYSupplier.getAsDouble();
         double rotationPercent = rotationSupplier.getAsDouble();
 
         if(fieldOriented) {

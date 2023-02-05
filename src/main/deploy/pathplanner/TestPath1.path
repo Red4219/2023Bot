@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.519878103889226,
+        "x": 2.0,
         "y": 1.0567748451411407
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5198781038892264,
-        "y": 1.056774845141141
+        "x": 2.9999999999999996,
+        "y": 1.0567748451411407
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -24,45 +24,20 @@
     },
     {
       "anchorPoint": {
-        "x": 1.920086975565876,
+        "x": 4.090759630450378,
         "y": 1.0662953392415107
       },
       "prevControl": {
-        "x": 1.528719406007742,
-        "y": 1.0662953392415107
+        "x": 5.505098703607472,
+        "y": 1.0662953392415104
       },
       "nextControl": {
-        "x": 2.311454545124009,
-        "y": 1.0662953392415107
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": 0.3,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 5.442669792703007,
-        "y": 1.0186928687396573
-      },
-      "prevControl": {
-        "x": 6.8570088658601005,
-        "y": 1.018692868739657
-      },
-      "nextControl": {
-        "x": 4.028330719545913,
-        "y": 1.0186928687396575
+        "x": 2.6764205572932847,
+        "y": 1.0662953392415109
       },
       "holonomicAngle": 0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 0.6,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -84,7 +59,7 @@
       "nextControl": null,
       "holonomicAngle": 160.0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 0.6,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -106,12 +81,6 @@
       "position": 1.0,
       "names": [
         "event"
-      ]
-    },
-    {
-      "position": 3.0,
-      "names": [
-        "event2"
       ]
     }
   ]

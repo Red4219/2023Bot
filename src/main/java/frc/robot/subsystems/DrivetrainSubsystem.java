@@ -367,6 +367,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_FIELD_ORIENTED)) {
                 this.driveCommand.toggleFieldOriented();
         }
+
+        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_MODE)) {
+                this.limelight.togglePipeline();
+        }
         
         limelight.periodic();
         //double[] limelightpose = limelight.getBotPose();

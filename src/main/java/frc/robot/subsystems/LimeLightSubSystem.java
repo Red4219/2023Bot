@@ -23,10 +23,13 @@ public class LimeLightSubSystem extends SubsystemBase {
     NetworkTableEntry ta = table.getEntry("ta");
     NetworkTableEntry tv = table.getEntry("tv");
     NetworkTableEntry tl = table.getEntry("tl");
+    NetworkTableEntry getpipe = table.getEntry("getpipe");
+    NetworkTableEntry pipeline = table.getEntry("pipeline");
     NetworkTableEntry botpose = table.getEntry("botpose");
     NetworkTableEntry botpose_wpiblue = table.getEntry("botpose_wpiblue");
     NetworkTableEntry botpose_wpired = table.getEntry("botpose_wpired");
     ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Limelight");
+
 
     double tempX = 0.0;
     double tempY = 0.0;
@@ -51,6 +54,8 @@ public class LimeLightSubSystem extends SubsystemBase {
     double ledOff = 1;
     double ledOn = 3;
 
+    long _pipeline = 0;
+
     long timeStamp = 0;
 
     public LimeLightSubSystem() {
@@ -66,9 +71,10 @@ public class LimeLightSubSystem extends SubsystemBase {
         shuffleboardTab.addDouble("Botpose 5", () -> botpose_array[5]);
         shuffleboardTab.addDouble("pose X", () -> pose.getX());
         shuffleboardTab.addDouble("pose Y", () -> pose.getY());
-        shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.102:5800");
+        shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
         shuffleboardTab.addBoolean("April Tags", () -> canSeeAprilTags);
         shuffleboardTab.addInteger("Latency", () -> latency);
+        shuffleboardTab.addInteger("Pipeline", () -> _pipeline);
         shuffleboardTab.addDouble("wpiblue[0]", () -> botpose_array_wpiblue[0]);
 
         //SmartDashboard.putBoolean("April Tag Visible", canSeeAprilTags);
@@ -85,6 +91,7 @@ public class LimeLightSubSystem extends SubsystemBase {
         botpose_array = table.getEntry("botpose").getDoubleArray(botpose_array);
         botpose_array_wpiblue = table.getEntry("botpose_wpiblue").getDoubleArray(botpose_array_wpiblue);
         botpose_array_wpired = table.getEntry("botpose_wpired").getDoubleArray(botpose_array_wpired);
+        _pipeline = table.getEntry("getpipe").getInteger(0);
 
         //System.out.println("length: " + botpose_array.length);
 
@@ -170,5 +177,26 @@ public class LimeLightSubSystem extends SubsystemBase {
 
     public double getTargetRotation() {
         return 0.0;
+    }
+
+    public long getPipeline() {
+        return _pipeline;
+    }
+
+    public void setPipeline(long pipeline) {
+        this._pipeline = pipeline;
+    }
+
+    public void togglePipeline() {
+
+        System.out.println("togglePipeline called");
+
+        if(_pipeline == 0) {
+            _pipeline = 1;
+        } else {
+            _pipeline = 0;
+        }
+
+        pipeline.setDouble(_pipeline);
     }
 }
