@@ -1,6 +1,8 @@
 package frc.robot.commands.autonomous;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.LongSupplier;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,6 +15,7 @@ public class AutoAutoAimCommand extends CommandBase {
     private final DoubleSupplier translationXSupplier;
     private final DoubleSupplier translationYSupplier;
     private final DoubleSupplier rotationSupplier;
+    private final BooleanSupplier targetFoundSupplier;
 
     private boolean fieldOriented = true;
 
@@ -20,12 +23,14 @@ public class AutoAutoAimCommand extends CommandBase {
             DrivetrainSubsystem drivetrain,
             DoubleSupplier translationXSupplier,
             DoubleSupplier translationYSupplier,
-            DoubleSupplier rotationSupplier
+            DoubleSupplier rotationSupplier,
+            BooleanSupplier targetFoundSupplier
     ) {
         this.drivetrain = drivetrain;
         this.translationXSupplier = translationXSupplier;
         this.translationYSupplier = translationYSupplier;
         this.rotationSupplier = rotationSupplier;
+        this.targetFoundSupplier = targetFoundSupplier;
 
         this.drivetrain.setDriveCommand(this);
 
@@ -54,7 +59,9 @@ public class AutoAutoAimCommand extends CommandBase {
     @Override
     public void execute() {
 
-        System.out.println("AutoAimCommand called");
+        System.out.println("AutoAimCommand called, targetX is: " + translationXSupplier.getAsDouble());
+
+        System.out.println("canSeeTarget: " + targetFoundSupplier.getAsBoolean());
 
         /*if(translationXSupplier.getAsDouble() < 0.0) {
             System.out.println("need to rotate to the left");
@@ -100,7 +107,7 @@ public class AutoAutoAimCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         // Stop the drivetrain
-        System.out.println("done");
+        System.out.println("AutoAutoAimCommand - done, targetX is: " + translationXSupplier.getAsDouble());
         drivetrain.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
 
@@ -109,12 +116,15 @@ public class AutoAutoAimCommand extends CommandBase {
 
         double targetX = translationXSupplier.getAsDouble();
 
-        //
+        if(this.targetFoundSupplier.getAsBoolean() == true) {
 
-        if(targetX >= Constants.VISION_REFLECTIVE_THRESHOLD_MIN && targetX <= Constants.VISION_REFLECTIVE_THRESHOLD_MAX) {
-            System.out.println("Hit threshold isFinished() targetX: " + targetX);
-            return true;
-        }
+            if(targetX >= Constants.VISION_REFLECTIVE_THRESHOLD_MIN && targetX <= Constants.VISION_REFLECTIVE_THRESHOLD_MAX) {
+                System.out.println("Hit threshold isFinished() targetX: " + targetX);
+                return true;
+            }
+
+            System.out.println("Target is found, threshold not met");
+        } 
         
         return false;
     }

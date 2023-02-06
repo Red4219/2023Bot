@@ -43,7 +43,7 @@ public class LimeLightSubSystem extends SubsystemBase {
     Rotation3d rot3d;
 
     boolean ledMode = true;
-    boolean canSeeAprilTags = false;
+    boolean canSeeTarget = false;
 
     double x, y, area = 0.0;
     long v, latency = 0;
@@ -72,7 +72,7 @@ public class LimeLightSubSystem extends SubsystemBase {
         shuffleboardTab.addDouble("pose X", () -> pose.getX());
         shuffleboardTab.addDouble("pose Y", () -> pose.getY());
         shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
-        shuffleboardTab.addBoolean("April Tags", () -> canSeeAprilTags);
+        shuffleboardTab.addBoolean("Target", () -> canSeeTarget);
         shuffleboardTab.addInteger("Latency", () -> latency);
         shuffleboardTab.addInteger("Pipeline", () -> _pipeline);
         shuffleboardTab.addDouble("wpiblue[0]", () -> botpose_array_wpiblue[0]);
@@ -97,9 +97,9 @@ public class LimeLightSubSystem extends SubsystemBase {
 
         // this is needed when the limelight can't see any april tags and loses its pose
         //if(botpose_array.length <= 0) {
-        if(v == 0 || botpose_array.length <= 0) {
+        /*if(v == 0 || botpose_array.length <= 0) {
             botpose_array = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-            canSeeAprilTags = false;
+            canSeeTarget = false;
         } else {
 
             // the field is 1654 long, by 802 wide
@@ -124,14 +124,22 @@ public class LimeLightSubSystem extends SubsystemBase {
             rot3d = new Rotation3d(botpose_array[3], botpose_array[4], botpose_array[5]);
             pose = new Pose3d(tran3d, rot3d);
 
-            canSeeAprilTags = true;
+            canSeeTarget = true;
+        }*/
+
+        if(v > 0) {
+            canSeeTarget = true;
+        }
+        
+
+        if(canSeeTarget == true) {
+            tran3d = new Translation3d(botpose_array_wpiblue[0], botpose_array_wpiblue[1], botpose_array_wpiblue[2]);
+            rot3d = new Rotation3d(botpose_array_wpiblue[3], botpose_array_wpiblue[4], botpose_array_wpiblue[5]);
+            poseBlue = new Pose3d(tran3d, rot3d);
         }
 
-        tran3d = new Translation3d(botpose_array_wpiblue[0], botpose_array_wpiblue[1], botpose_array_wpiblue[2]);
-        rot3d = new Rotation3d(botpose_array_wpiblue[3], botpose_array_wpiblue[4], botpose_array_wpiblue[5]);
-        poseBlue = new Pose3d(tran3d, rot3d);
-
         this.timeStamp = System.currentTimeMillis() - latency;
+        
     }
 
     public Pose3d getBotPose() {
@@ -159,11 +167,11 @@ public class LimeLightSubSystem extends SubsystemBase {
         return ledMode;
     }
 
-    boolean canSeeAprilTags() {
-        return this.canSeeAprilTags;
+    public boolean canSeeTarget() {
+        return this.canSeeTarget;
     }
 
-    long getTimeStamp() {
+    public long getTimeStamp() {
         return this.timeStamp;
     }
 

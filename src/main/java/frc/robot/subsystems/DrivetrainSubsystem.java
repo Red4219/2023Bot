@@ -407,9 +407,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 autoAiming = false;
         }
 
-        if(limelight.canSeeAprilTags() && useLimeLightForPoseCorrection) {
-                //System.out.println("we are correcting");
-                //poseEstimator.addVisionMeasurement(limelight.getBotPose().toPose2d(), limelight.getTimeStamp());
+        if(limelight.canSeeTarget() && useLimeLightForPoseCorrection) {
                 poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), limelight.getTimeStamp());
         }
 

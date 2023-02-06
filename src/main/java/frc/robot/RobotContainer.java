@@ -95,26 +95,28 @@ public class RobotContainer {
 
         HashMap<String, Command> eventMap = new HashMap<>();
         //eventMap.put("event1", new PrintCommand("Passed marker 1"));
-        eventMap.put("event1", new AutoAutoAimCommand(
+        /*eventMap.put("event1", new AutoAutoAimCommand(
             drivetrain, 
             () -> this.limeLight.getTargetX(), 
             () -> this.limeLight.getTargetY(), 
-            () -> this.limeLight.getTargetRotation()
-        ));
+            () -> this.limeLight.getTargetRotation(),
+            () -> this.limeLight.canSeeTarget()
+        ));*/
 
         eventMap.put("event2", new AutoAutoAimCommand(
             drivetrain, 
             () -> this.limeLight.getTargetX(), 
             () -> this.limeLight.getTargetY(), 
-            () -> this.limeLight.getTargetRotation()
+            () -> this.limeLight.getTargetRotation(),
+            () -> this.limeLight.canSeeTarget()
         ));
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             drivetrain::getPose,
             drivetrain::setPose,
             //drivetrain.getKinimatics(), 
-            new PIDConstants(0.0, 0.0, 0.0), 
-            new PIDConstants(0.0, 0.0, 0.0),
+            new PIDConstants(0.0, 0.0, 0.5), 
+            new PIDConstants(0.0, 0.5, 0.0),
             drivetrain::drive, 
             //drivetrain::setModuleStates,
             eventMap, 
