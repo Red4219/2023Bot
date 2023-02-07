@@ -115,19 +115,14 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "event2"
+        ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "after",
+        "waitTime": 3.0
       }
     }
   ],
-  "markers": [
-    {
-      "position": 1.8946022727272736,
-      "names": [
-        "event2"
-      ]
-    }
-  ]
+  "markers": []
 }

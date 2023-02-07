@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -116,12 +117,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public DrivetrainSubsystem() {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
+        ShuffleboardLayout layout = null;
         
 
         frontLeftModule = Mk3SwerveModuleHelper.createNeo(
-                shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
-                        .withSize(2, 4)
-                        .withPosition(0, 0),
+                //shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
+                        //.withSize(2, 4)
+                        //.withPosition(0, 0),
+                        layout,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
@@ -130,9 +133,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
 
         frontRightModule = Mk3SwerveModuleHelper.createNeo(
-                shuffleboardTab.getLayout("Front Right Module", BuiltInLayouts.kList)
-                        .withSize(2, 4)
-                        .withPosition(2, 0),
+                //shuffleboardTab.getLayout("Front Right Module", BuiltInLayouts.kList)
+                        //.withSize(2, 4)
+                        //.withPosition(2, 0),
+                layout,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
@@ -141,9 +145,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
 
         backLeftModule = Mk3SwerveModuleHelper.createNeo(
-                shuffleboardTab.getLayout("Back Left Module", BuiltInLayouts.kList)
-                        .withSize(2, 4)
-                        .withPosition(4, 0),
+                //shuffleboardTab.getLayout("Back Left Module", BuiltInLayouts.kList)
+                        //.withSize(2, 4)
+                        //.withPosition(4, 0),
+                layout,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.BACK_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_LEFT_MODULE_STEER_MOTOR,
@@ -152,9 +157,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
 
         backRightModule = Mk3SwerveModuleHelper.createNeo(
-                shuffleboardTab.getLayout("Back Right Module", BuiltInLayouts.kList)
-                        .withSize(2, 4)
-                        .withPosition(6, 0),
+                //shuffleboardTab.getLayout("Back Right Module", BuiltInLayouts.kList)
+                        //.withSize(2, 4)
+                        //.withPosition(6, 0),
+                layout,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
@@ -408,11 +414,25 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
 
         if(limelight.canSeeTarget() && useLimeLightForPoseCorrection) {
-                poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), limelight.getTimeStamp());
+                //System.out.println("correcting with april tags");
+                //edu.wpi.first.wpilibj.Timer.getFPGATimestamp()                
+                //poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), limelight.getTimeStamp());
+                poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), edu.wpi.first.wpilibj.Timer.getFPGATimestamp() );
         }
 
+        poseEstimator.updateWithTime(
+                edu.wpi.first.wpilibj.Timer.getFPGATimestamp(), 
+                gyroscope.getRotation2d(),
+                new SwerveModulePosition[]{
+                        new SwerveModulePosition(frontLeftModule.getPosition(), new Rotation2d(frontLeftModule.getSteerAngle())),
+                        new SwerveModulePosition(frontRightModule.getPosition(), new Rotation2d(frontRightModule.getSteerAngle())),
+                        new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
+                        new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
+                }
+        );
+
         //odometry.update(
-        poseEstimator.update(
+        /*poseEstimator.update(
                 gyroscope.getRotation2d(),
                 //swerveModulePositions
                 new SwerveModulePosition[]{
@@ -421,7 +441,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         new SwerveModulePosition(backLeftModule.getPosition(), new Rotation2d(backLeftModule.getSteerAngle())),
                         new SwerveModulePosition(backRightModule.getPosition(), new Rotation2d(backRightModule.getSteerAngle()))
                 }
-        );
+        );*/
 
         //field.setRobotPose(odometry.getPoseMeters());
         field.setRobotPose(poseEstimator.getEstimatedPosition());

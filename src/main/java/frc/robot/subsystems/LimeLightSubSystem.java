@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -60,22 +61,32 @@ public class LimeLightSubSystem extends SubsystemBase {
 
     public LimeLightSubSystem() {
         //post to smart dashboard periodically
-        shuffleboardTab.addDouble("LimelightX", () -> x);
-        shuffleboardTab.addDouble("LimelightY", () -> y);
-        shuffleboardTab.addDouble("LimelightArea", () -> area);
-        shuffleboardTab.addDouble("Botpose 0", () -> botpose_array[0]);
-        shuffleboardTab.addDouble("Botpose 1", () -> botpose_array[1]);
-        shuffleboardTab.addDouble("Botpose 2", () -> botpose_array[2]);
-        shuffleboardTab.addDouble("Botpose 3", () -> botpose_array[3]);
-        shuffleboardTab.addDouble("Botpose 4", () -> botpose_array[4]);
-        shuffleboardTab.addDouble("Botpose 5", () -> botpose_array[5]);
-        shuffleboardTab.addDouble("pose X", () -> pose.getX());
-        shuffleboardTab.addDouble("pose Y", () -> pose.getY());
-        shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
-        shuffleboardTab.addBoolean("Target", () -> canSeeTarget);
-        shuffleboardTab.addInteger("Latency", () -> latency);
-        shuffleboardTab.addInteger("Pipeline", () -> _pipeline);
-        shuffleboardTab.addDouble("wpiblue[0]", () -> botpose_array_wpiblue[0]);
+        //shuffleboardTab.addDouble("LimelightX", () -> x);
+        //shuffleboardTab.addDouble("LimelightY", () -> y);
+        //shuffleboardTab.addDouble("LimelightArea", () -> area);
+        //shuffleboardTab.addDouble("Botpose 0", () -> botpose_array[0]);
+        //shuffleboardTab.addDouble("Botpose 1", () -> botpose_array[1]);
+        //shuffleboardTab.addDouble("Botpose 2", () -> botpose_array[2]);
+        //shuffleboardTab.addDouble("Botpose 3", () -> botpose_array[3]);
+        //shuffleboardTab.addDouble("Botpose 4", () -> botpose_array[4]);
+        //shuffleboardTab.addDouble("Botpose 5", () -> botpose_array[5]);
+        //shuffleboardTab.addDouble("pose X", () -> pose.getX());
+        //shuffleboardTab.addDouble("pose Y", () -> pose.getY());
+
+
+        //shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
+        shuffleboardTab.getLayout("Camera", BuiltInLayouts.kList)
+                        .withSize(6, 4)
+                        .withPosition(0, 0).addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
+
+
+        //shuffleboardTab.addBoolean("Target", () -> canSeeTarget);
+        //shuffleboardTab.addInteger("Latency", () -> latency);
+        //shuffleboardTab.addInteger("Pipeline", () -> _pipeline);
+        shuffleboardTab.getLayout("Camera", BuiltInLayouts.kList)
+                        .withSize(6, 4)
+                        .withPosition(0, 4).addInteger("Pipeline", () -> _pipeline);
+        //shuffleboardTab.addDouble("wpiblue[0]", () -> botpose_array_wpiblue[0]);
 
         //SmartDashboard.putBoolean("April Tag Visible", canSeeAprilTags);
     }
