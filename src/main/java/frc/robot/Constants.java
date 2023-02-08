@@ -32,6 +32,17 @@ public class Constants {
     public static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 1;
     public static final double AUTO_MAX_SPEED_METERS_PER_SECOND_SQUARED = 1;
 
+    //
+    // Arm IDs
+    //
+    public static final int ARM_BASE_MOTOR_ID = 13;
+    public static final int ARM_HIGH_MOTOR_ID = 14;
+    public static final int ARM_WRIST_MOTOR_ID = 15;
+
+    //
+    // Buttons
+    //
+
     public static final int DRIVER_BUTTON_A = 1;
     public static final int DRIVER_BUTTON_B = 2;
     public static final int DRIVER_BUTTON_X = 3;
@@ -53,6 +64,15 @@ public class Constants {
     public static final int OPERATOR_LEFT_BUMPER = 5;
     public static final int OPERATOR_RIGHT_BUMPER = 6;
 
+    public static final int OPERATOR_BUTTON_HIGH = OPERATOR_BUTTON_A;
+    public static final int OPERATOR_BUTTON_MID = OPERATOR_BUTTON_B;
+    public static final int OPERATOR_BUTTON_LOW = OPERATOR_BUTTON_X;
+
     public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
     public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
+
+    public static float PITCH_CHANGE_AMOUNT = 0.1f;
+    public static float PITCH_CHANGE_THRESHOLD = 0.5f;
+    public static float ROLL_CHANGE_AMOUNT = 0.1f;
+    public static float ROLL_CHANGE_THRESHOLD = 0.5f;
 }

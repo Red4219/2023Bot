@@ -2,7 +2,10 @@ package frc.robot;
 
 import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.HighPositionCommand;
 import frc.robot.commands.autonomous.AutoAutoAimCommand;
+import frc.robot.commands.autonomous.AutoBalanceCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimeLightSubSystem;
 
@@ -27,14 +30,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
     private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
     SendableChooser<Command> chooser = new SendableChooser<>();
     private final XboxController controller = new XboxController(0);
+    private final XboxController operatorController = new XboxController(1);
 
     private DriveCommand driveCommand; 
+    private AutoBalanceCommand autoPitchCommand;
 
     public RobotContainer() {
         //drivetrain.register();
@@ -53,7 +60,14 @@ public class RobotContainer {
 
         drivetrain.setDriverController(controller);
 
+        autoPitchCommand = new AutoBalanceCommand(drivetrain);
+
         configureAutoCommands();
+        configureButtonBindings();
+    } 
+
+    public void configureButtonBindings() {
+        new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).whileTrue(new HighPositionCommand(armSubsystem));
     }
 
     public DrivetrainSubsystem getDrivetrain() {
@@ -103,13 +117,17 @@ public class RobotContainer {
             () -> this.limeLight.canSeeTarget()
         ));*/
 
-        eventMap.put("event2", new AutoAutoAimCommand(
+        /*eventMap.put("event2", new AutoAutoAimCommand(
             drivetrain, 
             () -> this.limeLight.getTargetX(), 
             () -> this.limeLight.getTargetY(), 
             () -> this.limeLight.getTargetRotation(),
             () -> this.limeLight.canSeeTarget()
-        ));
+        ));*/
+
+
+        eventMap.put("event2", new HighPositionCommand(armSubsystem));
+        eventMap.put("balance", new AutoBalanceCommand(drivetrain));
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             drivetrain::getPose,

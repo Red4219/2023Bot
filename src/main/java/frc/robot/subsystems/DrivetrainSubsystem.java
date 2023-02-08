@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.AutoBalanceCommand;
 
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -78,6 +79,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return gyroscope;
     }
 
+    public float getPitch() {
+        return gyroscope.getPitch();
+    }
+
+    public float getRoll() {
+        return gyroscope.getRoll();
+    }
+
     public void setDriverController(XboxController controller) {
         this.driverController = controller;
     }
@@ -100,6 +109,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 this.driveCommand = (DriveCommand) command;
         } else if(command instanceof AutoAimCommand) {
                 
+        } else if(command instanceof AutoBalanceCommand) {
+
         }
     }
 
