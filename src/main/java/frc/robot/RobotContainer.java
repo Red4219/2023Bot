@@ -18,6 +18,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.revrobotics.REVPhysicsSim;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -33,15 +34,17 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
-    private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
-    private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
-    private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    SendableChooser<Command> chooser = new SendableChooser<>();
     private final XboxController controller = new XboxController(0);
     private final XboxController operatorController = new XboxController(1);
-
+    private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
+    private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
+    private final ArmSubsystem armSubsystem = new ArmSubsystem(operatorController);
+    SendableChooser<Command> chooser = new SendableChooser<>();
     private DriveCommand driveCommand; 
     private AutoBalanceCommand autoPitchCommand;
+
+    // Simulation Stuff
+    private REVPhysicsSim revPhysicsSim;
 
     public RobotContainer() {
         //drivetrain.register();
@@ -67,7 +70,10 @@ public class RobotContainer {
     } 
 
     public void configureButtonBindings() {
-        new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).whileTrue(new HighPositionCommand(armSubsystem));
+        //new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).whileTrue(new HighPositionCommand(armSubsystem));
+
+        // High Motor
+        new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).onTrue(new HighPositionCommand(armSubsystem));
     }
 
     public DrivetrainSubsystem getDrivetrain() {
@@ -117,16 +123,16 @@ public class RobotContainer {
             () -> this.limeLight.canSeeTarget()
         ));*/
 
-        /*eventMap.put("event2", new AutoAutoAimCommand(
+        eventMap.put("event2", new AutoAutoAimCommand(
             drivetrain, 
             () -> this.limeLight.getTargetX(), 
             () -> this.limeLight.getTargetY(), 
             () -> this.limeLight.getTargetRotation(),
             () -> this.limeLight.canSeeTarget()
-        ));*/
+        ));
 
 
-        eventMap.put("event2", new HighPositionCommand(armSubsystem));
+        //eventMap.put("event2", new HighPositionCommand(armSubsystem));
         eventMap.put("balance", new AutoBalanceCommand(drivetrain));
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
@@ -167,5 +173,10 @@ public class RobotContainer {
     public void scheduleAutonomous() {
         //Command command = chooser.getSelected();
         chooser.getSelected().schedule();
+    }
+
+    public void setRevPhysicsSim(REVPhysicsSim sim) {
+        this.revPhysicsSim = sim;
+        this.armSubsystem.setRevPhysicsSim(sim);
     }
 }

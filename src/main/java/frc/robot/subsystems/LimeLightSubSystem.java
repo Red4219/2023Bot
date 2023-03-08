@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -74,18 +77,24 @@ public class LimeLightSubSystem extends SubsystemBase {
         //shuffleboardTab.addDouble("pose Y", () -> pose.getY());
 
 
+        ShuffleboardLayout layout = shuffleboardTab.getLayout("Limelight", "Grid Layout").withSize(8,6).withPosition(0, 0);
+
         //shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
-        shuffleboardTab.getLayout("Camera", BuiltInLayouts.kList)
-                        .withSize(6, 4)
-                        .withPosition(0, 0).addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
+        //shuffleboardTab.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
+        //shuffleboardTab.getLayout("Camera", BuiltInLayouts.kList)
+        //layout.withSize(6, 4).withPosition(0, 0).addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
+        layout.addCamera("Limelight_camera", "LL_Camera", "http://10.42.19.11:5800");
+        
 
 
         //shuffleboardTab.addBoolean("Target", () -> canSeeTarget);
         //shuffleboardTab.addInteger("Latency", () -> latency);
         //shuffleboardTab.addInteger("Pipeline", () -> _pipeline);
-        shuffleboardTab.getLayout("Camera", BuiltInLayouts.kList)
-                        .withSize(6, 4)
-                        .withPosition(0, 4).addInteger("Pipeline", () -> _pipeline);
+        //shuffleboardTab.addInteger("Pipeline", () -> _pipeline);
+        
+        //shuffleboardTab.getLayout("Pipeline", BuiltInLayouts.kList)
+        //layout.withSize(1, 1).withPosition(0, 4).addInteger("Pipeline", () -> _pipeline);
+        layout.addInteger("Pipeline", () -> _pipeline);
         //shuffleboardTab.addDouble("wpiblue[0]", () -> botpose_array_wpiblue[0]);
 
         //SmartDashboard.putBoolean("April Tag Visible", canSeeAprilTags);

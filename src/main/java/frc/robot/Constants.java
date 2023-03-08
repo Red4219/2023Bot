@@ -5,6 +5,10 @@ import java.util.HashMap;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Constants {
+
+    //
+    // Drivetrain
+    //
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.686;
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.686;
 
@@ -33,11 +37,17 @@ public class Constants {
     public static final double AUTO_MAX_SPEED_METERS_PER_SECOND_SQUARED = 1;
 
     //
-    // Arm IDs
+    // Arm
     //
     public static final int ARM_BASE_MOTOR_ID = 13;
     public static final int ARM_HIGH_MOTOR_ID = 14;
     public static final int ARM_WRIST_MOTOR_ID = 15;
+    public static final int ARM_INTAKE_MOTOR_ID = 16;
+    public static final int ARM_INTAKE_SPEED_MULTIPLIER = 5;
+    
+    public enum IntakeDirection {
+        IN, OUT
+    }
 
     //
     // Buttons
@@ -49,6 +59,7 @@ public class Constants {
     public static final int DRIVER_BUTTON_Y = 4;
     public static final int DRIVER_LEFT_BUMPER = 5;
     public static final int DRIVER_RIGHT_BUMPER = 6;
+    public static final int DRIVER_BUTTON_SELECT = 7;
     public static final int DRIVER_BUTTON_START = 8;
 
     public static final int DRIVER_BUTTON_DISABLE_LED = DRIVER_BUTTON_A;
@@ -56,6 +67,7 @@ public class Constants {
     public static final int DRIVER_BUTTON_TOGGLE_FIELD_ORIENTED = DRIVER_BUTTON_Y;
     public static final int DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION = DRIVER_BUTTON_B;
     public static final int DRIVER_BUTTON_TOGGLE_LIMELIGHT_MODE = DRIVER_BUTTON_START;
+    public static final int DRIVER_BUTTON_TOGGLE_AUTO_BALANCE = DRIVER_BUTTON_SELECT;
 
     public static final int OPERATOR_BUTTON_A = 1;
     public static final int OPERATOR_BUTTON_B = 2;
@@ -71,8 +83,8 @@ public class Constants {
     public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
     public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
 
-    public static float PITCH_CHANGE_AMOUNT = 0.1f;
-    public static float PITCH_CHANGE_THRESHOLD = 0.5f;
+    public static float PITCH_CHANGE_AMOUNT = 0.6f;
+    public static float PITCH_CHANGE_THRESHOLD = 0.1f;
     public static float ROLL_CHANGE_AMOUNT = 0.1f;
     public static float ROLL_CHANGE_THRESHOLD = 0.5f;
 }

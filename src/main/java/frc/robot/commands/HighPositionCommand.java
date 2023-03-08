@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.revrobotics.SparkMaxPIDController;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
@@ -15,6 +17,8 @@ public class HighPositionCommand extends CommandBase {
         pidController.setSetpoint(5.0);
 
         addRequirements(armSubsystem);
+
+        System.out.println("a new HighPositionCommand was created");
     }
 
     @Override
@@ -25,21 +29,23 @@ public class HighPositionCommand extends CommandBase {
 
     @Override
     public void execute() {
-        System.out.println("HighPositionCommand executed");
-        double speed = pidController.calculate(5);
+        //System.out.println("HighPositionCommand executed");
+        double speed = pidController.calculate(armSubsystem.getHighEncoder().getPosition());
+
+        System.out.println("HighPositionCommand::execute() - position: " + armSubsystem.getHighEncoder().getPosition() + ", setPoint: " + pidController.getSetpoint() + ", speed: " + speed);
         // subsystem.setmotor
         armSubsystem.setHighMotor(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("HighPositionCommand ended");
+        System.out.println("HighPositionCommand ended, interrupted: " + interrupted);
         armSubsystem.setHighMotor(0);
     }
 
     @Override
     public boolean isFinished() {
-        System.out.println("HighPositionCommand finished");
+        //System.out.println("HighPositionCommand finished");
         return false;
         //return true;
     }

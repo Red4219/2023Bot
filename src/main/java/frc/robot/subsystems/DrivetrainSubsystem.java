@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.commands.AutoAimCommand;
+import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.AutoBalanceCommand;
 
@@ -74,6 +75,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double tempDegrees = 180;
 
     private boolean autoAiming = false;
+    private boolean autoBalance = false;
 
     public Gyro getGyro() {
         return gyroscope;
@@ -399,6 +401,24 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         this.useLimeLightForPoseCorrection = true;
                 }
         }
+
+        
+
+        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_AUTO_BALANCE)) {
+
+                //System.out.println("getRawButtonPressed called");
+                autoBalance = true;
+        }
+
+        if(this.driverController.getRawButtonReleased(Constants.DRIVER_BUTTON_TOGGLE_AUTO_BALANCE)) {
+                autoBalance = false;
+        }
+
+        if(autoBalance) {
+                BalanceCommand balanceCommand = new BalanceCommand(this);
+                balanceCommand.execute();
+        }
+
 
         
         // Check for auto aim
