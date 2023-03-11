@@ -27,9 +27,9 @@ public class IntakeCommand extends CommandBase {
         // subsystem.setmotor
         
         if(this.direction == Constants.IntakeDirection.IN) {
-            armSubsystem.setBaseMotor(.5 *  Constants.ARM_INTAKE_SPEED_MULTIPLIER);
+            armSubsystem.setBaseMotor(.5);
         } else {
-            armSubsystem.setBaseMotor(-.5 * Constants.ARM_INTAKE_SPEED_MULTIPLIER);
+            armSubsystem.setBaseMotor(-.5);
         }
     }
 

@@ -139,9 +139,9 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         // Move the wrist
-        if(operatorController.getRightY() > 0.0) {
+        if(operatorController.getRightY() > 0.0 || operatorController.getRightY() < 0.0) {
             //setWristMotor(operatorController.getRightY());
-            wristMotor.set(operatorController.getRightY());
+            wristMotor.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
         } else {
             setWristMotor(0.0);
         }
