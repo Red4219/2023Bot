@@ -41,9 +41,8 @@ public class Constants {
     //
     public static final int ARM_BASE_MOTOR_ID = 13;
     public static final int ARM_HIGH_MOTOR_ID = 14;
-    public static final int ARM_WRIST_MOTOR_ID = 15;
-    public static final int ARM_INTAKE_MOTOR_ID = 16;
-    public static final int ARM_INTAKE_SPEED_MULTIPLIER = 5;
+    public static final int ARM_WRIST_MOTOR_ID = 16;
+    public static final int ARM_INTAKE_MOTOR_ID = 15;
     
     public enum IntakeDirection {
         IN, OUT

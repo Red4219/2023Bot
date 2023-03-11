@@ -127,12 +127,23 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Check if the operator is pulling the triggers to run the intake
         rightTriggerValue = this.operatorController.getRightTriggerAxis();
-        leftTriggerValue = this.operatorController.getRightTriggerAxis();
+        leftTriggerValue = this.operatorController.getLeftTriggerAxis();
 
-        if(rightTriggerValue > 0) {
-            intakeMotor.set(rightTriggerValue * Constants.ARM_INTAKE_SPEED_MULTIPLIER);
-        } else if(leftTriggerValue > 0) {
-            intakeMotor.set(-leftTriggerValue * Constants.ARM_INTAKE_SPEED_MULTIPLIER);
+        // Move the intake
+        if(rightTriggerValue > 0.0) {
+            intakeMotor.set(rightTriggerValue);
+        } else if(leftTriggerValue > 0.0) {
+            intakeMotor.set(-leftTriggerValue);
+        } else {
+            intakeMotor.set(0.0);
+        }
+
+        // Move the wrist
+        if(operatorController.getRightY() > 0.0) {
+            //setWristMotor(operatorController.getRightY());
+            wristMotor.set(operatorController.getRightY());
+        } else {
+            setWristMotor(0.0);
         }
 
         //System.out.println("encoder value: " + baseEncoder.getPosition());
