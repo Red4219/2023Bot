@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.math.controller.PIDController;
@@ -11,12 +12,14 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -25,6 +28,10 @@ public class ArmSubsystem extends SubsystemBase {
     private final CANSparkMax highMotor = new CANSparkMax(Constants.ARM_HIGH_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     private final CANSparkMax wristMotor = new CANSparkMax(Constants.ARM_WRIST_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     private final CANSparkMax intakeMotor = new CANSparkMax(Constants.ARM_INTAKE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+
+    // Setup the grouped motors (two motors that act as one)
+    private final MotorControllerGroup baseGroup = new MotorControllerGroup(baseMotor);
+    private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor);
 
     //private CANSparkMax baseMotor;
     //private CANSparkMax highMotor;
@@ -84,6 +91,11 @@ public class ArmSubsystem extends SubsystemBase {
         shuffleboardTab.addNumber("Intake RT", () -> rightTriggerValue);
         shuffleboardTab.addNumber("Intake LT", () -> leftTriggerValue);
 
+        wristMotor.setIdleMode(IdleMode.kBrake);
+        intakeMotor.setIdleMode(IdleMode.kBrake);
+        highMotor.setIdleMode(IdleMode.kBrake);
+        baseMotor.setIdleMode(IdleMode.kBrake);
+
         this.operatorController = operatorController;
     }
 
@@ -140,10 +152,16 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Move the wrist
         if(operatorController.getRightY() > 0.0 || operatorController.getRightY() < 0.0) {
-            //setWristMotor(operatorController.getRightY());
             wristMotor.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
         } else {
             setWristMotor(0.0);
+        }
+
+        // Move the high bar
+        if(operatorController.getLeftY() > 0.0 || operatorController.getLeftY() < 0.0) {
+            highGroup.set(operatorController.getRightY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+        } else {
+            highGroup.set(0.0);
         }
 
         //System.out.println("encoder value: " + baseEncoder.getPosition());
