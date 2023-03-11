@@ -157,11 +157,15 @@ public class ArmSubsystem extends SubsystemBase {
             setWristMotor(0.0);
         }
 
+        System.out.println(operatorController.getLeftY());
+
         // Move the high bar
         if(operatorController.getLeftY() > 0.0 || operatorController.getLeftY() < 0.0) {
-            highGroup.set(operatorController.getRightY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+            //highGroup.set(operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+            highMotor.set(operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
         } else {
-            highGroup.set(0.0);
+            //highGroup.set(0.0);
+            highMotor.set(0.0);
         }
 
         //System.out.println("encoder value: " + baseEncoder.getPosition());
