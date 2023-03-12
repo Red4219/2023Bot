@@ -47,9 +47,9 @@ public class ArmSubsystem extends SubsystemBase {
     private final RelativeEncoder wristEncoder = wristMotor1.getEncoder();
     private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
-    private PIDController pidHigh = new PIDController(5.0, 0.0, 0.3);
-    private PIDController pidWrist = new PIDController(5.0, 0.0, 0.3);
-    private PIDController pidBase = new PIDController(5.0, 0.0, 0.3);
+    private PIDController pidHigh = new PIDController(3.0, 0.0, 0.3);
+    private PIDController pidWrist = new PIDController(3.0, 0.0, 0.3);
+    private PIDController pidBase = new PIDController(3.0, 0.0, 0.3);
 
     private int LAST_PRESET_ID = Constants.OPERATOR_BUTTON_FOLD;
 
@@ -60,7 +60,9 @@ public class ArmSubsystem extends SubsystemBase {
     //private RelativeEncoder wristEncoder;
     //private RelativeEncoder intakeEncoder;
 
-    double rightTriggerValue, leftTriggerValue = 0;
+    double rightTriggerValue = 0;
+    double leftTriggerValue = 0;
+    double rightY = 0;
 
     XboxController operatorController;
 
@@ -102,6 +104,7 @@ public class ArmSubsystem extends SubsystemBase {
         shuffleboardTab.addNumber("Intake", () -> intakeEncoder.getPosition());
         shuffleboardTab.addNumber("Intake RT", () -> rightTriggerValue);
         shuffleboardTab.addNumber("Intake LT", () -> leftTriggerValue);
+        shuffleboardTab.addNumber("RightY", () -> rightY);
 
         wristMotor1.setIdleMode(IdleMode.kBrake);
         wristMotor2.setIdleMode(IdleMode.kBrake);
@@ -139,7 +142,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setWristMotor(double speed) {
-        wristMotor1.set(speed);
+        //wristMotor1.set(speed);
     }
 
     public void setIntakeMotor(double speed) {
@@ -168,21 +171,27 @@ public class ArmSubsystem extends SubsystemBase {
         highGroup.set(pidSetting);*/
 
         // Move the intake
-        if(rightTriggerValue > 0.0) {
+        /*if(rightTriggerValue < 0.0 || rightTriggerValue > 0.0) {
             intakeMotor.set(rightTriggerValue);
-        } else if(leftTriggerValue > 0.0) {
+        } else*/ if(leftTriggerValue < 0.0 || leftTriggerValue > 0.0) {
             intakeMotor.set(-leftTriggerValue);
         } else {
             intakeMotor.set(0.0);
         }
         
         // Move the wrist
-        if(operatorController.getRightY() > 0.0 || operatorController.getRightY() < 0.0) {
+        //if(operatorController.getRightY() > 0.0 || operatorController.getRightY() < 0.0) {
+        if(rightTriggerValue > 0.1 || rightTriggerValue < 0.1) {
             //wristMotor1.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
-            wristGroup.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
+            //wristGroup.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
+            //wristGroup.set(rightTriggerValue * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
+            wristGroup.set(rightTriggerValue);
+            //rightY = operatorController.getRightY();
         } else {
-            setWristMotor(0.0);
+            wristGroup.set(0.0);
         }
+
+
 
         //System.out.println(operatorController.getLeftY());
         //highGroup.set(0.02);
@@ -215,20 +224,23 @@ public class ArmSubsystem extends SubsystemBase {
 
             switch(LAST_PRESET_ID) {
                 case Constants.OPERATOR_BUTTON_HIGH:
-                pidHighSetting = pidHigh.calculate(highEncoder1.getPosition(), -10.0) / 100;
+                pidHighSetting = pidHigh.calculate(highEncoder1.getPosition(), Constants.ARM_HIGH_ENCODER_VALUE) / 100;
                     highGroup.set(pidHighSetting);
-                pidWristSetting = pidWrist.calculate(wristEncoder.getPosition(), -10.0) / 100;
+                pidWristSetting = pidWrist.calculate(wristEncoder.getPosition(), Constants.ARM_HIGH_WRIST_ENCODER_VALUE) / 100;
                     wristGroup.set(pidWristSetting);
                 break;
                 case Constants.OPERATOR_BUTTON_MID:
-                pidHighSetting = pidHigh.calculate(highEncoder1.getPosition(), -7.0) / 100;
+                pidHighSetting = pidHigh.calculate(highEncoder1.getPosition(), Constants.ARM_MID_ARM_ENCODER_VALUE) / 100;
                     highGroup.set(pidHighSetting);
+                pidWristSetting = pidWrist.calculate(wristEncoder.getPosition(), Constants.ARM_MID_WRIST_ENCODER_VALUE) / 100;
+                    wristGroup.set(pidWristSetting);
                 break;
             }
         }
         
         //System.out.println("operatorController.getLeftY()" + operatorController.getLeftY());
-        System.out.println(highEncoder1.getPosition());
+        //System.out.println("rightTriggerValue: " + rightTriggerValue + ", leftTriggerValue: " + leftTriggerValue);
+        //System.out.println("highEncoder1::Position: " + highEncoder1.getPosition());
     }
 
     public void setRevPhysicsSim(REVPhysicsSim sim) {

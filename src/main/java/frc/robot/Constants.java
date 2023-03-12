@@ -48,6 +48,15 @@ public class Constants {
 
     public static final double ARM_INTAKE_WRIST_MULTIPLIER = .3;
     public static final double ARM_HIGH_BAR_MULTIPLIER = .3;
+
+    // ARM PRESET VALUES
+    // ARM PRESET HIGH
+    public static final double ARM_HIGH_ENCODER_VALUE = -10.0;
+    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 6.0;
+
+    // ARM PRESET MID
+    public static final double ARM_MID_ARM_ENCODER_VALUE = -7.0;
+    public static final double ARM_MID_WRIST_ENCODER_VALUE = 6.6;
     
     public enum IntakeDirection {
         IN, OUT
