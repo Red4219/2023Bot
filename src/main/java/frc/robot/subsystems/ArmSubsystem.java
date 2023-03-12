@@ -47,10 +47,13 @@ public class ArmSubsystem extends SubsystemBase {
     private final RelativeEncoder wristEncoder = wristMotor1.getEncoder();
     private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
-    private PIDController pid = new PIDController(5.0, 0.0, 0.3);
-    private int LAST_PRESET_ID = 0;
+    private PIDController pidHigh = new PIDController(5.0, 0.0, 0.3);
+    private PIDController pidWrist = new PIDController(5.0, 0.0, 0.3);
+    private PIDController pidBase = new PIDController(5.0, 0.0, 0.3);
 
-    private boolean usingPresetSetting = false;
+    private int LAST_PRESET_ID = Constants.OPERATOR_BUTTON_FOLD;
+
+    private boolean usingPresetSetting = true;
 
     //private RelativeEncoder baseEncoder;
     //private RelativeEncoder highEncoder;
@@ -164,14 +167,6 @@ public class ArmSubsystem extends SubsystemBase {
         //System.out.println("setting: " + pidSetting + ", position: " + highEncoder1.getPosition() + ", stick: " + operatorController.getLeftY());
         highGroup.set(pidSetting);*/
 
-       
-
-        //highGroup.set(-.5 * Constants.ARM_HIGH_BAR_MULTIPLIER);
-
-        //highMotor1.set(pid.calculate(highEncoder1.getPosition(), -1.5));
-        //highGroup.set(pid.calculate(highEncoder1.getPosition(), -3.5));
-        //highGroup.set(0.2);
-
         // Move the intake
         if(rightTriggerValue > 0.0) {
             intakeMotor.set(rightTriggerValue);
@@ -214,16 +209,20 @@ public class ArmSubsystem extends SubsystemBase {
 
         if(usingPresetSetting) {
 
-            double pidSetting = 0.0;
+            double pidHighSetting = 0.0;
+            double pidWristSetting = 0.0;
+            double pidBaseSetting = 0.0;
 
             switch(LAST_PRESET_ID) {
                 case Constants.OPERATOR_BUTTON_HIGH:
-                    pidSetting = pid.calculate(highEncoder1.getPosition(), -10.0) / 100;
-                    highGroup.set(pidSetting);
+                pidHighSetting = pidHigh.calculate(highEncoder1.getPosition(), -10.0) / 100;
+                    highGroup.set(pidHighSetting);
+                pidWristSetting = pidWrist.calculate(wristEncoder.getPosition(), -10.0) / 100;
+                    wristGroup.set(pidWristSetting);
                 break;
                 case Constants.OPERATOR_BUTTON_MID:
-                    pidSetting = pid.calculate(highEncoder1.getPosition(), -7.0) / 100;
-                    highGroup.set(pidSetting);
+                pidHighSetting = pidHigh.calculate(highEncoder1.getPosition(), -7.0) / 100;
+                    highGroup.set(pidHighSetting);
                 break;
             }
         }

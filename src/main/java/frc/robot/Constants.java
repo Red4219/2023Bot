@@ -83,6 +83,7 @@ public class Constants {
     public static final int OPERATOR_BUTTON_HIGH = OPERATOR_BUTTON_Y;
     public static final int OPERATOR_BUTTON_MID = OPERATOR_BUTTON_B;
     public static final int OPERATOR_BUTTON_LOW = OPERATOR_BUTTON_A;
+    public static final int OPERATOR_BUTTON_FOLD = OPERATOR_BUTTON_X;
 
     public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
     public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
