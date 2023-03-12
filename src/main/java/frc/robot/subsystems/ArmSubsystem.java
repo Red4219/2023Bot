@@ -25,13 +25,16 @@ import frc.robot.Constants;
 public class ArmSubsystem extends SubsystemBase {
 
     private final CANSparkMax baseMotor = new CANSparkMax(Constants.ARM_BASE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax highMotor = new CANSparkMax(Constants.ARM_HIGH_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax wristMotor = new CANSparkMax(Constants.ARM_WRIST_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax highMotor1 = new CANSparkMax(Constants.ARM_HIGH_MOTOR_ID_1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax highMotor2 = new CANSparkMax(Constants.ARM_HIGH_MOTOR_ID_2, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax wristMotor1 = new CANSparkMax(Constants.ARM_WRIST_MOTOR_ID_1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax wristMotor2 = new CANSparkMax(Constants.ARM_WRIST_MOTOR_ID_2, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     private final CANSparkMax intakeMotor = new CANSparkMax(Constants.ARM_INTAKE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
 
     // Setup the grouped motors (two motors that act as one)
     private final MotorControllerGroup baseGroup = new MotorControllerGroup(baseMotor);
-    private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor);
+    private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor1, highMotor2);
+    private final MotorControllerGroup wristGroup = new MotorControllerGroup(wristMotor1, wristMotor2);
 
     //private CANSparkMax baseMotor;
     //private CANSparkMax highMotor;
@@ -39,9 +42,15 @@ public class ArmSubsystem extends SubsystemBase {
     //private CANSparkMax intakeMotor;
 
     private final RelativeEncoder baseEncoder = baseMotor.getEncoder();
-    private final RelativeEncoder highEncoder = highMotor.getEncoder();
-    private final RelativeEncoder wristEncoder = wristMotor.getEncoder();
+    private final RelativeEncoder highEncoder1 = highMotor1.getEncoder();
+    private final RelativeEncoder highEncoder2 = highMotor2.getEncoder();
+    private final RelativeEncoder wristEncoder = wristMotor1.getEncoder();
     private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
+
+    private PIDController pid = new PIDController(5.0, 0.0, 0.3);
+    private int LAST_PRESET_ID = 0;
+
+    private boolean usingPresetSetting = false;
 
     //private RelativeEncoder baseEncoder;
     //private RelativeEncoder highEncoder;
@@ -85,32 +94,36 @@ public class ArmSubsystem extends SubsystemBase {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Arm");
 
         shuffleboardTab.addNumber("Base", () -> baseEncoder.getPosition());
-        shuffleboardTab.addNumber("High", () -> highEncoder.getPosition());
+        shuffleboardTab.addNumber("High", () -> highEncoder1.getPosition());
         shuffleboardTab.addNumber("Wrist", () -> wristEncoder.getPosition());
         shuffleboardTab.addNumber("Intake", () -> intakeEncoder.getPosition());
         shuffleboardTab.addNumber("Intake RT", () -> rightTriggerValue);
         shuffleboardTab.addNumber("Intake LT", () -> leftTriggerValue);
 
-        wristMotor.setIdleMode(IdleMode.kBrake);
+        wristMotor1.setIdleMode(IdleMode.kBrake);
+        wristMotor2.setIdleMode(IdleMode.kBrake);
         intakeMotor.setIdleMode(IdleMode.kBrake);
-        highMotor.setIdleMode(IdleMode.kBrake);
+        highMotor1.setIdleMode(IdleMode.kBrake);
+        highMotor1.setInverted(true);
+        highMotor2.setIdleMode(IdleMode.kBrake);
         baseMotor.setIdleMode(IdleMode.kBrake);
 
         this.operatorController = operatorController;
+
     }
 
     public void setHighMotor(double speed) {
-        highMotor.set(speed);
-        highMotor.setVoltage(speed);
+        highMotor1.set(speed);
+        highMotor1.setVoltage(speed);
         //System.out.println("encoder value: " + highEncoder.getPosition() + ", speed: " + speed);
     }
 
     public RelativeEncoder getHighEncoder() {
-        return this.highEncoder;
+        return this.highEncoder1;
     }
 
     public SparkMaxPIDController getHighMotorPIDController() {
-        return highMotor.getPIDController();
+        return highMotor1.getPIDController();
     }
 
     public void setBaseMotor(double speed) {
@@ -123,7 +136,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setWristMotor(double speed) {
-        wristMotor.set(speed);
+        wristMotor1.set(speed);
     }
 
     public void setIntakeMotor(double speed) {
@@ -141,6 +154,24 @@ public class ArmSubsystem extends SubsystemBase {
         rightTriggerValue = this.operatorController.getRightTriggerAxis();
         leftTriggerValue = this.operatorController.getLeftTriggerAxis();
 
+        //System.out.println("right: " + rightTriggerValue + ", left: " + leftTriggerValue);
+        //System.out.println("encoder: " + this.highEncoder1.getPosition());
+
+        //pid = new PIDController(0.5, 0.5, 0.5);
+
+        //this works 
+        /*double pidSetting = pid.calculate(highEncoder1.getPosition(), -4.5) / 100;
+        //System.out.println("setting: " + pidSetting + ", position: " + highEncoder1.getPosition() + ", stick: " + operatorController.getLeftY());
+        highGroup.set(pidSetting);*/
+
+       
+
+        //highGroup.set(-.5 * Constants.ARM_HIGH_BAR_MULTIPLIER);
+
+        //highMotor1.set(pid.calculate(highEncoder1.getPosition(), -1.5));
+        //highGroup.set(pid.calculate(highEncoder1.getPosition(), -3.5));
+        //highGroup.set(0.2);
+
         // Move the intake
         if(rightTriggerValue > 0.0) {
             intakeMotor.set(rightTriggerValue);
@@ -149,26 +180,56 @@ public class ArmSubsystem extends SubsystemBase {
         } else {
             intakeMotor.set(0.0);
         }
-
+        
         // Move the wrist
         if(operatorController.getRightY() > 0.0 || operatorController.getRightY() < 0.0) {
-            wristMotor.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
+            //wristMotor1.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
+            wristGroup.set(operatorController.getRightY() * Constants.ARM_INTAKE_WRIST_MULTIPLIER);
         } else {
             setWristMotor(0.0);
         }
 
-        System.out.println(operatorController.getLeftY());
+        //System.out.println(operatorController.getLeftY());
+        //highGroup.set(0.02);
+
+        //System.out.println("setting to: " + operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
 
         // Move the high bar
-        if(operatorController.getLeftY() > 0.0 || operatorController.getLeftY() < 0.0) {
-            //highGroup.set(operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
-            highMotor.set(operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+        if(operatorController.getLeftY() > 0.1 || operatorController.getLeftY() < -0.1) {
+            highGroup.set(operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+            usingPresetSetting = false;
         } else {
-            //highGroup.set(0.0);
-            highMotor.set(0.0);
+            highGroup.set(0.0);
         }
 
-        //System.out.println("encoder value: " + baseEncoder.getPosition());
+        if(operatorController.getRawButtonPressed(Constants.OPERATOR_BUTTON_HIGH)) {
+            usingPresetSetting = true;
+            LAST_PRESET_ID = Constants.OPERATOR_BUTTON_HIGH;
+        }
+
+        if(operatorController.getRawButtonPressed(Constants.OPERATOR_BUTTON_MID)) {
+            usingPresetSetting = true;
+            LAST_PRESET_ID = Constants.OPERATOR_BUTTON_MID;
+        }
+
+        if(usingPresetSetting) {
+
+            double pidSetting = 0.0;
+
+            switch(LAST_PRESET_ID) {
+                case Constants.OPERATOR_BUTTON_HIGH:
+                    pidSetting = pid.calculate(highEncoder1.getPosition(), -10.0) / 100;
+                    highGroup.set(pidSetting);
+                break;
+                case Constants.OPERATOR_BUTTON_MID:
+                    pidSetting = pid.calculate(highEncoder1.getPosition(), -7.0) / 100;
+                    highGroup.set(pidSetting);
+                break;
+            }
+        }
+        
+        //System.out.println("operatorController.getLeftY()" + operatorController.getLeftY());
+        System.out.println(highEncoder1.getPosition());
     }
 
     public void setRevPhysicsSim(REVPhysicsSim sim) {
@@ -178,9 +239,9 @@ public class ArmSubsystem extends SubsystemBase {
         //sim.addSparkMax(highMotor, DCMotor.getNEO(1));
 
         System.out.println("ArmSubsystem::setRevPhysicsSim() called");
-        REVPhysicsSim.getInstance().addSparkMax(highMotor, DCMotor.getNEO(1));
+        REVPhysicsSim.getInstance().addSparkMax(highMotor1, DCMotor.getNEO(1));
         REVPhysicsSim.getInstance().addSparkMax(baseMotor, DCMotor.getNEO(1));
-        REVPhysicsSim.getInstance().addSparkMax(wristMotor, DCMotor.getNEO(1));
+        REVPhysicsSim.getInstance().addSparkMax(wristMotor1, DCMotor.getNEO(1));
         REVPhysicsSim.getInstance().addSparkMax(intakeMotor, DCMotor.getNEO(1));
 
         /*sim.addSparkMax(

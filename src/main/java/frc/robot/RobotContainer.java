@@ -73,7 +73,7 @@ public class RobotContainer {
         //new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).whileTrue(new HighPositionCommand(armSubsystem));
 
         // High Motor
-        new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).onTrue(new HighPositionCommand(armSubsystem));
+        //new JoystickButton(operatorController, Constants.OPERATOR_BUTTON_HIGH).onTrue(new HighPositionCommand(armSubsystem));
     }
 
     public DrivetrainSubsystem getDrivetrain() {

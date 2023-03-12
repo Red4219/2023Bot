@@ -40,8 +40,10 @@ public class Constants {
     // Arm
     //
     public static final int ARM_BASE_MOTOR_ID = 13;
-    public static final int ARM_HIGH_MOTOR_ID = 14;
-    public static final int ARM_WRIST_MOTOR_ID = 16;
+    public static final int ARM_HIGH_MOTOR_ID_1 = 14;
+    public static final int ARM_HIGH_MOTOR_ID_2 = 18;
+    public static final int ARM_WRIST_MOTOR_ID_1 = 16;
+    public static final int ARM_WRIST_MOTOR_ID_2 = 19;
     public static final int ARM_INTAKE_MOTOR_ID = 15;
 
     public static final double ARM_INTAKE_WRIST_MULTIPLIER = .3;
@@ -78,9 +80,9 @@ public class Constants {
     public static final int OPERATOR_LEFT_BUMPER = 5;
     public static final int OPERATOR_RIGHT_BUMPER = 6;
 
-    public static final int OPERATOR_BUTTON_HIGH = OPERATOR_BUTTON_A;
+    public static final int OPERATOR_BUTTON_HIGH = OPERATOR_BUTTON_Y;
     public static final int OPERATOR_BUTTON_MID = OPERATOR_BUTTON_B;
-    public static final int OPERATOR_BUTTON_LOW = OPERATOR_BUTTON_X;
+    public static final int OPERATOR_BUTTON_LOW = OPERATOR_BUTTON_A;
 
     public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
     public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
