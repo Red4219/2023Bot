@@ -39,7 +39,8 @@ public class Constants {
     //
     // Arm
     //
-    public static final int ARM_BASE_MOTOR_ID = 13;
+    public static final int ARM_BASE_MOTOR_ID_1 = 13;
+    public static final int ARM_BASE_MOTOR_ID_2 = 17;
     public static final int ARM_HIGH_MOTOR_ID_1 = 14;
     public static final int ARM_HIGH_MOTOR_ID_2 = 18;
     public static final int ARM_WRIST_MOTOR_ID_1 = 16;
@@ -51,12 +52,25 @@ public class Constants {
 
     // ARM PRESET VALUES
     // ARM PRESET HIGH
-    public static final double ARM_HIGH_ENCODER_VALUE = -10.0;
-    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 6.0;
+    public static final double ARM_HIGH_ENCODER_VALUE = -12.0;
+    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 0.7;
+    public static final double ARM_HIGH_BASE_ENCODER_VALUE = 10.0;
 
     // ARM PRESET MID
-    public static final double ARM_MID_ARM_ENCODER_VALUE = -7.0;
-    public static final double ARM_MID_WRIST_ENCODER_VALUE = 6.6;
+    public static final double ARM_MID_ARM_ENCODER_VALUE = -9.0;
+    public static final double ARM_MID_WRIST_ENCODER_VALUE = -0.2;
+    //public static final double ARM_MID_BASE_ENCODER_VALUE = 9.0;
+    public static final double ARM_MID_BASE_ENCODER_VALUE = 2.5;
+
+    // ARM PRESET FOLD
+    public static final double ARM_FOLD_ARM_ENCODER_VALUE = 0.0;
+    public static final double ARM_FOLD_WRIST_ENCODER_VALUE = 6.6;
+    public static final double ARM_FOLD_BASE_ENCODER_VALUE = -2.5;
+
+    // ARM PRESET LOW
+    public static final double ARM_LOW_ARM_ENCODER_VALUE = -2.0;
+    public static final double ARM_LOW_WRIST_ENCODER_VALUE = 0.5;
+    public static final double ARM_LOW_BASE_ENCODER_VALUE = 4.5;
     
     public enum IntakeDirection {
         IN, OUT
@@ -88,6 +102,8 @@ public class Constants {
     public static final int OPERATOR_BUTTON_Y = 4;
     public static final int OPERATOR_LEFT_BUMPER = 5;
     public static final int OPERATOR_RIGHT_BUMPER = 6;
+    public static final int OPERATOR_BUTTON_SELECT = 7;
+    public static final int OPERATOR_BUTTON_START = 8;
 
     public static final int OPERATOR_BUTTON_HIGH = OPERATOR_BUTTON_Y;
     public static final int OPERATOR_BUTTON_MID = OPERATOR_BUTTON_B;
