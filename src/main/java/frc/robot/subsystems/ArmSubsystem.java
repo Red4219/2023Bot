@@ -152,7 +152,7 @@ public class ArmSubsystem extends SubsystemBase {
         
         // Wrist
         if(rightStickValue > 0.1 || rightStickValue < -0.1) {
-            wristTargetPosition += (rightStickValue * .5);
+            wristTargetPosition += (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
         } 
 
         // Calculate the Wrist PID for position
@@ -162,7 +162,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Arm
         if(operatorController.getLeftY() > 0.1 || operatorController.getLeftY() < -0.1) {
-            armTargetPosition += (operatorController.getLeftY() * .2);
+            armTargetPosition += (operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
         } 
 
         // Calculate the Arm PID for position
@@ -185,7 +185,7 @@ public class ArmSubsystem extends SubsystemBase {
         //
         // Following checks of presets were pressed
         //
-        
+
         // High
         if(operatorController.getRawButtonPressed(Constants.OPERATOR_BUTTON_HIGH)) {
             wristTargetPosition = Constants.ARM_HIGH_WRIST_ENCODER_VALUE;
