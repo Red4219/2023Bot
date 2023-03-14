@@ -53,7 +53,7 @@ public class Constants {
     // ARM PRESET VALUES
     // ARM PRESET HIGH
     public static final double ARM_HIGH_ENCODER_VALUE = -12.0;
-    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 0.7;
+    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 1.5;
     public static final double ARM_HIGH_BASE_ENCODER_VALUE = 10.0;
 
     // ARM PRESET MID
@@ -71,6 +71,11 @@ public class Constants {
     public static final double ARM_LOW_ARM_ENCODER_VALUE = -2.0;
     public static final double ARM_LOW_WRIST_ENCODER_VALUE = 0.5;
     public static final double ARM_LOW_BASE_ENCODER_VALUE = 4.5;
+
+    // ARM PRESET LOWLOW
+    public static final double ARM_LOWLOW_ARM_ENCODER_VALUE = -2.0;
+    public static final double ARM_LOWLOW_WRIST_ENCODER_VALUE = 0.5;
+    public static final double ARM_LOWLOW_BASE_ENCODER_VALUE = 4.5;
     
     public enum IntakeDirection {
         IN, OUT
@@ -108,6 +113,7 @@ public class Constants {
     public static final int OPERATOR_BUTTON_HIGH = OPERATOR_BUTTON_Y;
     public static final int OPERATOR_BUTTON_MID = OPERATOR_BUTTON_B;
     public static final int OPERATOR_BUTTON_LOW = OPERATOR_BUTTON_A;
+    public static final int OPERATOR_BUTTON_LOWLOW = OPERATOR_BUTTON_START;
     public static final int OPERATOR_BUTTON_FOLD = OPERATOR_BUTTON_X;
 
     public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
