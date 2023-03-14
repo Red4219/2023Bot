@@ -6,18 +6,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -36,15 +30,9 @@ public class ArmSubsystem extends SubsystemBase {
     private final MotorControllerGroup baseGroup = new MotorControllerGroup(baseMotor1, baseMotor2);
     private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor1, highMotor2);
     private final MotorControllerGroup wristGroup = new MotorControllerGroup(wristMotor1, wristMotor2);
-
-    //private CANSparkMax baseMotor;
-    //private CANSparkMax highMotor;
-    //private CANSparkMax wristMotor;
-    //private CANSparkMax intakeMotor;
-
     private final RelativeEncoder baseEncoder1 = baseMotor1.getEncoder();
     private final RelativeEncoder highEncoder1 = highMotor1.getEncoder();
-    private final RelativeEncoder highEncoder2 = highMotor2.getEncoder();
+    //private final RelativeEncoder highEncoder2 = highMotor2.getEncoder();
     private final RelativeEncoder wristEncoder = wristMotor1.getEncoder();
     private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
@@ -54,9 +42,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     double rightStickValue = 0;
     double triggerValues = 0;
-    double rightY = 0;
-    double leftY = 0;
 
+    // Start off with the FOLD position
     double wristTargetPosition = Constants.ARM_FOLD_WRIST_ENCODER_VALUE;
     double armTargetPosition = Constants.ARM_FOLD_ARM_ENCODER_VALUE;
     double baseTargetPosition = Constants.ARM_FOLD_BASE_ENCODER_VALUE;
@@ -95,14 +82,12 @@ public class ArmSubsystem extends SubsystemBase {
 
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Arm");
 
-        shuffleboardTab.addNumber("Base", () -> baseEncoder1.getPosition());
-        shuffleboardTab.addNumber("High", () -> highEncoder1.getPosition());
-        shuffleboardTab.addNumber("Wrist", () -> wristEncoder.getPosition());
-        shuffleboardTab.addNumber("Intake", () -> intakeEncoder.getPosition());
+        shuffleboardTab.addNumber("Base Pos", () -> baseEncoder1.getPosition());
+        shuffleboardTab.addNumber("High Pos", () -> highEncoder1.getPosition());
+        shuffleboardTab.addNumber("Wrist Pos", () -> wristEncoder.getPosition());
+        shuffleboardTab.addNumber("Intake Pos", () -> intakeEncoder.getPosition());
         shuffleboardTab.addNumber("RightStick", () -> rightStickValue);
-        shuffleboardTab.addNumber("Intake Triggers", () -> triggerValues);
-        shuffleboardTab.addNumber("RightY", () -> rightY);
-        shuffleboardTab.addNumber("LeftY", () -> leftY);
+        shuffleboardTab.addNumber("Triggers", () -> triggerValues);
 
         wristMotor1.setIdleMode(IdleMode.kBrake);
         wristMotor2.setIdleMode(IdleMode.kBrake);
@@ -170,6 +155,7 @@ public class ArmSubsystem extends SubsystemBase {
             wristTargetPosition += (rightStickValue * .5);
         } 
 
+        // Calculate the Wrist PID for position
         double wristtemp = 0.0;
         wristtemp = pidWrist.calculate(wristEncoder.getPosition(), wristTargetPosition) / 100;
         wristGroup.set(wristtemp);
@@ -179,6 +165,7 @@ public class ArmSubsystem extends SubsystemBase {
             armTargetPosition += (operatorController.getLeftY() * .2);
         } 
 
+        // Calculate the Arm PID for position
         double armtemp = 0.0;
         armtemp = pidHigh.calculate(highEncoder1.getPosition(), armTargetPosition) / 100;
         highGroup.set(armtemp);
@@ -190,10 +177,15 @@ public class ArmSubsystem extends SubsystemBase {
             baseTargetPosition -= .05;
         }
 
+        // Calculate the Base PID for position
         double basetemp = 0.0;
         basetemp = pidBase.calculate(baseEncoder1.getPosition(), baseTargetPosition) / 100;
         //baseGroup.set(basetemp);
 
+        //
+        // Following checks of presets were pressed
+        //
+        
         // High
         if(operatorController.getRawButtonPressed(Constants.OPERATOR_BUTTON_HIGH)) {
             wristTargetPosition = Constants.ARM_HIGH_WRIST_ENCODER_VALUE;
