@@ -319,7 +319,7 @@ public class RobotContainer {
 
         
         eventMap.put("placeHigh", new AutoPlaceHighCommand(armSubsystem));
-        eventMap.put("eject", new AutoEjectCubeCommand(armSubsystem));
+        eventMap.put("ejectCube", new AutoEjectCubeCommand(armSubsystem));
         eventMap.put("fold", new AutoFoldCommand(armSubsystem));
         eventMap.put("balance", new AutoBalanceCommand(drivetrain));
 

@@ -159,11 +159,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void ejectCone() {
-        intakeMotor.set(.3);
+        intakeMotor.set(-.3);
     }
 
     public void ejectCube() {
-        intakeMotor.set(-.3);
+        intakeMotor.set(.3);
     }
     
     @Override
@@ -204,7 +204,14 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Arm
         if(operatorController.getLeftY() > 0.1 || operatorController.getLeftY() < -0.1) {
-            armTargetPosition += (operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+            //armTargetPosition += (operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+
+            // This is a check to verify that we are not going to high
+            double temp = armTargetPosition + (operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
+
+            if(temp >= (Constants.ARM_HIGH_ENCODER_VALUE - 1.5)) {
+                armTargetPosition = temp;
+            }
         } 
 
         // Calculate the Arm PID for position
