@@ -158,8 +158,12 @@ public class ArmSubsystem extends SubsystemBase {
         intakeMotor.set(0);
     }
 
-    public void eject() {
+    public void ejectCone() {
         intakeMotor.set(.3);
+    }
+
+    public void ejectCube() {
+        intakeMotor.set(-.3);
     }
     
     @Override

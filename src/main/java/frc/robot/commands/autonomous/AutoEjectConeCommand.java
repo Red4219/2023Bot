@@ -4,13 +4,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class AutoEjectCommand extends CommandBase {
+public class AutoEjectConeCommand extends CommandBase {
 
     private ArmSubsystem arm;
     private Timer timer;
     private boolean hasSetSpeed = false;
 
-    public AutoEjectCommand(
+    public AutoEjectConeCommand(
             ArmSubsystem arm
     ) {
         this.arm = arm;
@@ -24,7 +24,7 @@ public class AutoEjectCommand extends CommandBase {
         if(hasSetSpeed == false) {
             timer.start();
             this.arm.setAutoRunning(true);
-            this.arm.eject();
+            this.arm.ejectCone();
             hasSetSpeed = true;
         }
         
