@@ -52,25 +52,25 @@ public class Constants {
 
     // ARM PRESET VALUES
     // ARM PRESET HIGH
-    public static final double ARM_HIGH_ENCODER_VALUE = -12.0;
+    public static final double ARM_HIGH_ENCODER_VALUE = -11.0;
     public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 1.5;
-    public static final double ARM_HIGH_BASE_ENCODER_VALUE = 10.0;
+    public static final double ARM_HIGH_BASE_ENCODER_VALUE = 20.0;
 
     // ARM PRESET MID
-    public static final double ARM_MID_ARM_ENCODER_VALUE = -9.0;
+    public static final double ARM_MID_ARM_ENCODER_VALUE = -8.0;
     public static final double ARM_MID_WRIST_ENCODER_VALUE = -0.2;
     //public static final double ARM_MID_BASE_ENCODER_VALUE = 9.0;
     public static final double ARM_MID_BASE_ENCODER_VALUE = 2.5;
 
     // ARM PRESET FOLD
-    public static final double ARM_FOLD_ARM_ENCODER_VALUE = 0.0;
-    public static final double ARM_FOLD_WRIST_ENCODER_VALUE = 6.6;
+    public static final double ARM_FOLD_ARM_ENCODER_VALUE = -2.3;
+    public static final double ARM_FOLD_WRIST_ENCODER_VALUE = -0.9;
     public static final double ARM_FOLD_BASE_ENCODER_VALUE = -2.5;
 
     // ARM PRESET LOW
     public static final double ARM_LOW_ARM_ENCODER_VALUE = -2.0;
     public static final double ARM_LOW_WRIST_ENCODER_VALUE = 0.5;
-    public static final double ARM_LOW_BASE_ENCODER_VALUE = 4.5;
+    public static final double ARM_LOW_BASE_ENCODER_VALUE = 24.0;
 
     // ARM PRESET LOWLOW
     public static final double ARM_LOWLOW_ARM_ENCODER_VALUE = -2.0;
@@ -120,7 +120,7 @@ public class Constants {
     public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
 
     public static float PITCH_CHANGE_AMOUNT = 0.6f;
-    public static float PITCH_CHANGE_THRESHOLD = 0.1f;
+    public static float PITCH_CHANGE_THRESHOLD = 0.5f;
     public static float ROLL_CHANGE_AMOUNT = 0.1f;
     public static float ROLL_CHANGE_THRESHOLD = 0.5f;
 }

@@ -43,6 +43,8 @@ public class ArmSubsystem extends SubsystemBase {
     double rightStickValue = 0;
     double triggerValues = 0;
 
+    boolean autoRunning = false;
+
     // Start off with the FOLD position
     double wristTargetPosition = Constants.ARM_FOLD_WRIST_ENCODER_VALUE;
     double armTargetPosition = Constants.ARM_FOLD_ARM_ENCODER_VALUE;
@@ -135,6 +137,30 @@ public class ArmSubsystem extends SubsystemBase {
     public SparkMaxPIDController getIntakeMotorPIDController() {
         return intakeMotor.getPIDController();
     }
+
+    public void setAutoRunning(boolean autoRunning) {
+        this.autoRunning = autoRunning;
+    }
+
+    public void moveHigh() {
+        wristTargetPosition = Constants.ARM_HIGH_WRIST_ENCODER_VALUE;
+        armTargetPosition = Constants.ARM_HIGH_ENCODER_VALUE;
+        baseTargetPosition = Constants.ARM_HIGH_BASE_ENCODER_VALUE;
+    }
+
+    public void moveFold() {
+        wristTargetPosition = Constants.ARM_FOLD_WRIST_ENCODER_VALUE;
+        armTargetPosition = Constants.ARM_FOLD_ARM_ENCODER_VALUE;
+        baseTargetPosition = Constants.ARM_FOLD_BASE_ENCODER_VALUE;
+    }
+
+    public void stopIntake() {
+        intakeMotor.set(0);
+    }
+
+    public void eject() {
+        intakeMotor.set(.3);
+    }
     
     @Override
     public void periodic() {
@@ -146,13 +172,25 @@ public class ArmSubsystem extends SubsystemBase {
         // Move the intake
         if(triggerValues < 0.0 || triggerValues > 0.0) {
             intakeMotor.set(-triggerValues);
-        } else {
+        } else if(autoRunning == false) {
             intakeMotor.set(0.0);
         }
+
+        /*if(triggerValues > 0.1 || triggerValues < -0.1) {
+            intakeMotor.set(-triggerValues);
+        }*/
+        
         
         // Wrist
         if(rightStickValue > 0.1 || rightStickValue < -0.1) {
-            wristTargetPosition += (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
+
+            //wristTargetPosition += (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
+
+            double temp = wristTargetPosition + (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
+            
+            if(temp < 5 && temp > -0.5) {
+                wristTargetPosition = temp;
+            }
         } 
 
         // Calculate the Wrist PID for position
@@ -180,7 +218,7 @@ public class ArmSubsystem extends SubsystemBase {
         // Calculate the Base PID for position
         double basetemp = 0.0;
         basetemp = pidBase.calculate(baseEncoder1.getPosition(), baseTargetPosition) / 100;
-        //baseGroup.set(basetemp);
+        baseGroup.set(basetemp);
 
         //
         // Following checks of presets were pressed

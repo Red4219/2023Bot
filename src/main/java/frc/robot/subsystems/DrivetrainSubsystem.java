@@ -286,7 +286,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetPose() {
-        System.out.println("------------------> resetPose() called");
+        //System.out.println("------------------> resetPose() called");
 
         /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
         swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());

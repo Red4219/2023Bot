@@ -16,7 +16,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        System.out.println("teleopInit() called");
+        //System.out.println("teleopInit() called");
         container.getDrivetrain().resetPose();
     }
 
@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        System.out.println("autonomousInit() called");
+        //System.out.println("autonomousInit() called");
         container.scheduleAutonomous();
     }
 
