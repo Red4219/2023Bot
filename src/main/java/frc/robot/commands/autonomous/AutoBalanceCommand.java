@@ -22,23 +22,25 @@ public class AutoBalanceCommand extends CommandBase {
     @Override
     public void execute() {
 
-        System.out.println("AutoBalanceCommand::execure() called, pitch: " + drivetrain.getPitch() + ", roll: " + drivetrain.getRoll());
+        System.out.println("AutoBalanceCommand::execute() called, pitch: " + drivetrain.getPitch() + ", roll: " + drivetrain.getRoll());
 
         if(drivetrain.getPitch() > (0 + Constants.PITCH_CHANGE_THRESHOLD)) {
             pitchMoveDirection = Constants.PITCH_CHANGE_AMOUNT;
+            //pitchMoveDirection = (drivetrain.getPitch()/100) * Constants.PITCH_CHANGE_AMOUNT;
         } else if(drivetrain.getPitch() < (0 - Constants.PITCH_CHANGE_THRESHOLD)) {
             pitchMoveDirection = -Constants.PITCH_CHANGE_AMOUNT;
+            //pitchMoveDirection = ((drivetrain.getPitch()/100) * -Constants.PITCH_CHANGE_AMOUNT);
         } else {
             pitchMoveDirection = 0;
         }
 
-        if(drivetrain.getPitch() > (0 + Constants.ROLL_CHANGE_THRESHOLD)) {
+        /*if(drivetrain.getPitch() > (0 + Constants.ROLL_CHANGE_THRESHOLD)) {
             rolllMoveDirection = Constants.ROLL_CHANGE_AMOUNT;
         } else if(drivetrain.getPitch() < (0 - Constants.ROLL_CHANGE_THRESHOLD)) {
             rolllMoveDirection = -Constants.ROLL_CHANGE_AMOUNT;
         } else {
             rolllMoveDirection = 0;
-        }
+        }*/
 
         drivetrain.drive(new ChassisSpeeds(
             pitchMoveDirection,

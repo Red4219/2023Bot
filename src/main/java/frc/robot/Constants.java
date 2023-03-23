@@ -119,7 +119,7 @@ public class Constants {
     public static double VISION_REFLECTIVE_THRESHOLD_MIN = -0.5;
     public static double VISION_REFLECTIVE_THRESHOLD_MAX  = 0.5;
 
-    public static float PITCH_CHANGE_AMOUNT = 0.6f;
+    public static float PITCH_CHANGE_AMOUNT = 0.25f;
     public static float PITCH_CHANGE_THRESHOLD = 0.5f;
     public static float ROLL_CHANGE_AMOUNT = 0.1f;
     public static float ROLL_CHANGE_THRESHOLD = 0.5f;

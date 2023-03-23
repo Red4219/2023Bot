@@ -42,6 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     double rightStickValue = 0;
     double triggerValues = 0;
+    double rightTriggerValue = 0;
 
     boolean autoRunning = false;
 
@@ -89,7 +90,8 @@ public class ArmSubsystem extends SubsystemBase {
         shuffleboardTab.addNumber("Wrist Pos", () -> wristEncoder.getPosition());
         shuffleboardTab.addNumber("Intake Pos", () -> intakeEncoder.getPosition());
         shuffleboardTab.addNumber("RightStick", () -> rightStickValue);
-        shuffleboardTab.addNumber("Triggers", () -> triggerValues);
+        shuffleboardTab.addNumber("Left Trigger", () -> triggerValues);
+        shuffleboardTab.addNumber("Right Trigger", () -> rightTriggerValue);
 
         wristMotor1.setIdleMode(IdleMode.kBrake);
         wristMotor2.setIdleMode(IdleMode.kBrake);
@@ -172,10 +174,22 @@ public class ArmSubsystem extends SubsystemBase {
         // Check if the operator is pulling the triggers to run the intake
         rightStickValue = this.operatorController.getRightX();
         triggerValues = this.operatorController.getLeftTriggerAxis();
+        rightTriggerValue = this.operatorController.getRightTriggerAxis();
+
+        //System.out.println(this.operatorController.getRightTriggerAxis());
 
         // Move the intake
-        if(triggerValues < 0.0 || triggerValues > 0.0) {
+        /*if(triggerValues < 0.0 || triggerValues > 0.0) {
             intakeMotor.set(-triggerValues);
+        } else if(autoRunning == false) {
+            intakeMotor.set(0.0);
+        }*/
+
+
+        if(triggerValues > 0.0) {
+            intakeMotor.set(-triggerValues);
+        } else if (rightTriggerValue > 0.0) {
+            intakeMotor.set(rightTriggerValue);
         } else if(autoRunning == false) {
             intakeMotor.set(0.0);
         }
@@ -190,9 +204,10 @@ public class ArmSubsystem extends SubsystemBase {
 
             //wristTargetPosition += (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
 
-            double temp = wristTargetPosition + (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
+            //double temp = wristTargetPosition + (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
+            double temp = wristTargetPosition + (rightStickValue);
             
-            if(temp < 5 && temp > -0.5) {
+            if(temp < 5 && temp > -1.0) {
                 wristTargetPosition = temp;
             }
         } 
