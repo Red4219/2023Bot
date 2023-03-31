@@ -29,6 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
     // Setup the grouped motors (two motors that act as one)
     private final MotorControllerGroup baseGroup = new MotorControllerGroup(baseMotor1, baseMotor2);
     private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor1, highMotor2);
+    //private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor2);
     private final MotorControllerGroup wristGroup = new MotorControllerGroup(wristMotor1, wristMotor2);
     private final RelativeEncoder baseEncoder1 = baseMotor1.getEncoder();
     private final RelativeEncoder highEncoder1 = highMotor1.getEncoder();
@@ -36,9 +37,10 @@ public class ArmSubsystem extends SubsystemBase {
     private final RelativeEncoder wristEncoder = wristMotor1.getEncoder();
     private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
-    private PIDController pidHigh = new PIDController(2.8, 4.0, 0.0);
+    //private PIDController pidHigh = new PIDController(2.8, 4.0, 0.0);
+    private PIDController pidHigh = new PIDController(3.5, 4.0, 1.0);
     private PIDController pidWrist = new PIDController(3.0, 0.0, 0.0);
-    private PIDController pidBase = new PIDController(2.5, 2.0, 0.3);
+    private PIDController pidBase = new PIDController(2.5, 2.0, 0.6);
 
     double rightStickValue = 0;
     double triggerValues = 0;
@@ -205,11 +207,14 @@ public class ArmSubsystem extends SubsystemBase {
             //wristTargetPosition += (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
 
             //double temp = wristTargetPosition + (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
-            double temp = wristTargetPosition + (rightStickValue);
+            double temp = wristTargetPosition + (rightStickValue * Constants.ARM_WRIST_MULTIPLIER);
             
-            if(temp < 5 && temp > -1.0) {
+            //if(temp < 5 && temp > -1.0) {
+            /*if(temp < 5 && temp > -1.5) {
                 wristTargetPosition = temp;
-            }
+            }*/
+
+            wristTargetPosition = temp;
         } 
 
         // Calculate the Wrist PID for position
@@ -221,9 +226,10 @@ public class ArmSubsystem extends SubsystemBase {
         if(operatorController.getLeftY() > 0.1 || operatorController.getLeftY() < -0.1) {
             //armTargetPosition += (operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
 
-            // This is a check to verify that we are not going to high
+            
             double temp = armTargetPosition + (operatorController.getLeftY() * Constants.ARM_HIGH_BAR_MULTIPLIER);
 
+            // This is a check to verify that we are not going to high
             if(temp >= (Constants.ARM_HIGH_ENCODER_VALUE - 1.5)) {
                 armTargetPosition = temp;
             }

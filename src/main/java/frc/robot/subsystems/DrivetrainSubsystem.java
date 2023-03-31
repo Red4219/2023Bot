@@ -206,6 +206,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         //System.out.println("----------> just created the odometry, poseX is: " + odometry.getPoseMeters().getX() + ", poseY is: " + odometry.getPoseMeters().getY());
 
         shuffleboardTab.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
+        shuffleboardTab.addNumber("Pitch", () -> getPitch());
+        shuffleboardTab.addNumber("Roll", () -> getRoll());
         //shuffleboardTab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
         shuffleboardTab.addNumber("Pose X", () -> poseEstimator.getEstimatedPosition().getX());
         //shuffleboardTab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
@@ -366,6 +368,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return poseEstimator.getEstimatedPosition().getRotation();
         //return gyroscope.getRotation2d();
     }
+
+    
 
     public void drive(ChassisSpeeds chassisSpeeds) {
         //System.out.println("---------------------> drive called");
