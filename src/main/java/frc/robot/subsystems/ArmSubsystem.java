@@ -30,6 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final MotorControllerGroup baseGroup = new MotorControllerGroup(baseMotor1, baseMotor2);
     private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor1, highMotor2);
     //private final MotorControllerGroup highGroup = new MotorControllerGroup(highMotor2);
+
     private final MotorControllerGroup wristGroup = new MotorControllerGroup(wristMotor1, wristMotor2);
     private final RelativeEncoder baseEncoder1 = baseMotor1.getEncoder();
     private final RelativeEncoder highEncoder1 = highMotor1.getEncoder();
@@ -99,8 +100,18 @@ public class ArmSubsystem extends SubsystemBase {
         wristMotor2.setIdleMode(IdleMode.kBrake);
         intakeMotor.setIdleMode(IdleMode.kBrake);
         highMotor1.setIdleMode(IdleMode.kBrake);
+        //highMotor1.setIdleMode(IdleMode.kCoast);
         highMotor1.setInverted(true);
+        
         highMotor2.setIdleMode(IdleMode.kBrake);
+        //highMotor2.setIdleMode(IdleMode.kCoast);
+        //highMotor2.setInverted(true);
+
+        //highMotor1.setSmartCurrentLimit(50);
+        highMotor1.setSmartCurrentLimit(50);
+        highMotor2.setSmartCurrentLimit(50);
+
+        //highMotor2.setInverted(true);
         baseMotor1.setIdleMode(IdleMode.kBrake);
         baseMotor2.setIdleMode(IdleMode.kBrake);
         baseMotor2.setInverted(true);
@@ -152,6 +163,12 @@ public class ArmSubsystem extends SubsystemBase {
         baseTargetPosition = Constants.ARM_HIGH_BASE_ENCODER_VALUE;
     }
 
+    public void moveHighCube() {
+        wristTargetPosition = Constants.ARM_HIGH_WRIST_ENCODER_VALUE_CUBE;
+        armTargetPosition = Constants.ARM_HIGH_ENCODER_VALUE_CUBE;
+        baseTargetPosition = Constants.ARM_HIGH_BASE_ENCODER_VALUE_CUBE;
+    }
+
     public void moveFold() {
         wristTargetPosition = Constants.ARM_FOLD_WRIST_ENCODER_VALUE;
         armTargetPosition = Constants.ARM_FOLD_ARM_ENCODER_VALUE;
@@ -168,6 +185,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void ejectCube() {
         intakeMotor.set(.3);
+    }
+
+    public void moveIntakeCube() {
+        wristTargetPosition = Constants.ARM_LOWLOW_WRIST_ENCODER_VALUE;
+        armTargetPosition = Constants.ARM_LOWLOW_ARM_ENCODER_VALUE;
+        baseTargetPosition = Constants.ARM_LOWLOW_BASE_ENCODER_VALUE;
     }
     
     @Override
