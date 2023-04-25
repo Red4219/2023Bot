@@ -183,6 +183,9 @@ public class RobotContainer {
         chooser.addOption("RedCenterPlaceBalance", loadRedCenterPlaceBalance());
         chooser.addOption("RedLeftPlaceTaxi", loadRedLeftPlaceTaxi());
         chooser.addOption("RedRightPlaceTaxi", loadRedRightPlaceTaxi());
+        chooser.addOption("BlueDoubleCube", loadBlueDoubleCube());
+        chooser.addOption("RedDoubleCube", loadRedDoubleCube());
+
 
         chooser.setDefaultOption("BlueLeftPlaceTaxi", blueLeftPlaceTaxiCommand);
 
@@ -381,18 +384,59 @@ public class RobotContainer {
     public Command loadBlueDoubleCube() {
         // Load the basic blue
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(
-            "BlueRightDoubleCube", 
-            new PathConstraints(3.0, 3.0)
+            "BlueLeftDoubleCube", 
+            new PathConstraints(1.5, 1.5)
         );
 
         HashMap<String, Command> eventMap = new HashMap<>();
         
-        eventMap.put("placeHighCube", new AutoPlaceHighCommand(armSubsystem));
+        eventMap.put("placeHighCube", new AutoPlaceHighCubeCommand(armSubsystem));
         eventMap.put("ejectCube", new AutoEjectCubeCommand(armSubsystem));
         eventMap.put("fold", new AutoFoldCommand(armSubsystem));
         eventMap.put("balance", new AutoBalanceCommand(drivetrain));
         eventMap.put("intakeCube", new AutoIntakeCubeCommand(armSubsystem));
         eventMap.put("finishedIntakeCube", new AutoFinishedIntakeCubeCommand(armSubsystem));
+        eventMap.put("placeHighCube2", new AutoPlaceHighCubeCommand(armSubsystem));
+        eventMap.put("ejectCube2", new AutoEjectCubeCommand(armSubsystem));
+        eventMap.put("fold2", new AutoFoldCommand(armSubsystem));
+
+
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            drivetrain::getPose,
+            drivetrain::setPose,
+            //drivetrain.getKinimatics(), 
+            new PIDConstants(0.0, 0.0, 0.5), 
+            new PIDConstants(0.0, 0.5, 0.0),
+            drivetrain::drive, 
+            //drivetrain::setModuleStates,
+            eventMap, 
+            false,
+            drivetrain
+        );
+        
+        Command fullAuto = autoBuilder.fullAuto(pathGroup);
+
+        return fullAuto;
+    }
+
+    public Command loadRedDoubleCube() {
+        // Load the basic blue
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(
+            "RedRightDoubleCube", 
+            new PathConstraints(1.5, 1.5)
+        );
+
+        HashMap<String, Command> eventMap = new HashMap<>();
+        
+        eventMap.put("placeHighCube", new AutoPlaceHighCubeCommand(armSubsystem));
+        eventMap.put("ejectCube", new AutoEjectCubeCommand(armSubsystem));
+        eventMap.put("fold", new AutoFoldCommand(armSubsystem));
+        eventMap.put("balance", new AutoBalanceCommand(drivetrain));
+        eventMap.put("intakeCube", new AutoIntakeCubeCommand(armSubsystem));
+        eventMap.put("finishedIntakeCube", new AutoFinishedIntakeCubeCommand(armSubsystem));
+        eventMap.put("placeHighCube2", new AutoPlaceHighCubeCommand(armSubsystem));
+        eventMap.put("ejectCube2", new AutoEjectCubeCommand(armSubsystem));
+        eventMap.put("fold2", new AutoFoldCommand(armSubsystem));
 
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(

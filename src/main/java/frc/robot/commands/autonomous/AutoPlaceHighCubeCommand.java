@@ -24,6 +24,7 @@ public class AutoPlaceHighCubeCommand extends CommandBase{
             this.arm.moveHighCube();
             timer.start();
             startedTimer = true;
+            System.out.println("AutoPlaceHighCubeCommand called");
         }
         this.arm.periodic();
     }

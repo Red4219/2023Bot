@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class Mk3ModuleConfiguration {
     private double nominalVoltage = 12.0;
-    private double driveCurrentLimit = 80.0;
+    private double driveCurrentLimit = 70.0;
     private double steerCurrentLimit = 20.0;
 
     public double getNominalVoltage() {

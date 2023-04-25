@@ -116,12 +116,17 @@ public class ArmSubsystem extends SubsystemBase {
         baseMotor2.setIdleMode(IdleMode.kBrake);
         baseMotor2.setInverted(true);
 
+        highMotor1.burnFlash();
+        highMotor2.burnFlash();
+        baseMotor1.burnFlash();
+        baseMotor2.burnFlash();
+
         this.operatorController = operatorController;
     }
 
     public void setHighMotor(double speed) {
-        highMotor1.set(speed);
-        highMotor1.setVoltage(speed);
+        // highMotor1.set(speed);
+        highMotor1.setVoltage(Math.signum(speed) * Math.min(Math.abs(speed), 7));
     }
 
     public RelativeEncoder getHighEncoder() {
@@ -184,13 +189,16 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void ejectCube() {
-        intakeMotor.set(.3);
+        intakeMotor.set(.7);
     }
 
     public void moveIntakeCube() {
         wristTargetPosition = Constants.ARM_LOWLOW_WRIST_ENCODER_VALUE;
+        //wristTargetPosition = Constants.ARM_LOW_WRIST_ENCODER_VALUE;
         armTargetPosition = Constants.ARM_LOWLOW_ARM_ENCODER_VALUE;
+        //armTargetPosition = Constants.ARM_LOW_ARM_ENCODER_VALUE;
         baseTargetPosition = Constants.ARM_LOWLOW_BASE_ENCODER_VALUE;
+        //baseTargetPosition = Constants.ARM_LOW_BASE_ENCODER_VALUE;
     }
     
     @Override

@@ -21,10 +21,14 @@ public class AutoIntakeCubeCommand extends CommandBase{
     @Override
     public void execute() {
         if(startedTimer == false) {
-            this.arm.moveIntakeCube();
-            this.arm.setIntakeMotor(-.2);
             timer.start();
+            this.arm.setAutoRunning(true);
+            this.arm.moveIntakeCube();
             startedTimer = true;
+            this.arm.setIntakeMotor(-0.9);
+            System.out.println("moving the intake cube and running the intake motor");
+        } else {
+            
         }
         this.arm.periodic();
     }
@@ -38,7 +42,8 @@ public class AutoIntakeCubeCommand extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        if(timer.hasElapsed(1)) {
+        if(timer.hasElapsed(3)) {
+            this.arm.setAutoRunning(false);
             timer.stop();
             return true;
         }

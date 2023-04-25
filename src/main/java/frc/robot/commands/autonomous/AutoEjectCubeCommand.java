@@ -25,6 +25,7 @@ public class AutoEjectCubeCommand extends CommandBase {
             timer.start();
             this.arm.setAutoRunning(true);
             this.arm.ejectCube();
+            System.out.println("AutoEjectCubeCommand called");
             hasSetSpeed = true;
         }
         

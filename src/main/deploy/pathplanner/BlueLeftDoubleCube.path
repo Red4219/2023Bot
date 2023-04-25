@@ -2,15 +2,69 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.8153615404586123,
-        "y": 1.075815833346748
+        "x": 1.8915254932647645,
+        "y": 4.42702975667234
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.757890456395305,
-        "y": 0.5141066814248828
+        "x": 3.490968502127029,
+        "y": 4.446070744873081
       },
       "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "placeHighCube2",
+          "ejectCube2",
+          "fold2"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.680682145212272,
+        "y": 4.5983986504790115
+      },
+      "prevControl": {
+        "x": 3.5459674142132633,
+        "y": 4.5983986504790115
+      },
+      "nextControl": {
+        "x": 6.1852683325319155,
+        "y": 4.5983986504790115
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.937039247000109,
+        "y": 4.6460011209808645
+      },
+      "prevControl": {
+        "x": 8.26129559185958,
+        "y": 4.6460011209808645
+      },
+      "nextControl": {
+        "x": 7.61278290214064,
+        "y": 4.6460011209808645
+      },
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -28,37 +82,12 @@
     },
     {
       "anchorPoint": {
-        "x": 7.2991661422720915,
-        "y": 0.9425289159415604
+        "x": 2.1200173516736593,
+        "y": 4.42702975667234
       },
       "prevControl": {
-        "x": 5.594758373080137,
-        "y": 0.9425289159415604
-      },
-      "nextControl": {
-        "x": 5.594758373080137,
-        "y": 0.9425289159415604
-      },
-      "holonomicAngle": 0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 1.7868000581606875,
-        "y": 2.73238180680637
-      },
-      "prevControl": {
-        "x": 1.3393368354432682,
-        "y": -0.31417630531223
+        "x": 4.509661370866686,
+        "y": 4.5698371681779
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -68,8 +97,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "placeHigh",
-          "eject",
+          "placeHighCube",
+          "ejectCube",
           "fold"
         ],
         "executionBehavior": "sequential",
@@ -83,13 +112,13 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.6545454545454545,
+      "position": 0.9600000000000071,
       "names": [
         "intakeCube"
       ]
     },
     {
-      "position": 1.0,
+      "position": 2.029090909090851,
       "names": [
         "finishedIntakeCube"
       ]

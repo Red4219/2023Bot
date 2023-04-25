@@ -2,42 +2,42 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7963205522610584,
-        "y": 3.2655294764271248
+        "x": 14.61090561136183,
+        "y": 4.398468274373438
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7963205522610566,
-        "y": 3.2655294764271248
+        "x": 13.544610272118408,
+        "y": 4.86497248528939
       },
-      "holonomicAngle": -180.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "placeHigh",
-          "eject",
-          "fold"
+          "placeHighCube2",
+          "ejectCube2",
+          "fold2"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
-        "waitTime": 0.5
+        "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 1.872484505064023,
-        "y": 3.284570464627865
+        "x": 8.593953339925683,
+        "y": 4.607919144579382
       },
       "prevControl": {
-        "x": 1.1774884357369655,
-        "y": 3.313131946928976
+        "x": 11.212089217527602,
+        "y": 4.607919144579382
       },
       "nextControl": {
-        "x": 1.1774884357369655,
-        "y": 3.313131946928976
+        "x": 11.212089217527602,
+        "y": 4.607919144579382
       },
       "holonomicAngle": 180.0,
       "isReversal": true,
@@ -53,22 +53,24 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7772795640603167,
-        "y": 3.2655294764271248
+        "x": 14.449057211653617,
+        "y": 4.388947780270858
       },
       "prevControl": {
-        "x": 2.7604612311362295,
-        "y": 3.2612914085685656
+        "x": 11.773798369449471,
+        "y": 5.007779896794949
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "balance"
+          "placeHighCube",
+          "ejectCube",
+          "fold"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -76,5 +78,24 @@
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.65,
+      "names": [
+        "intakeCube"
+      ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "finishedIntakeCube"
+      ]
+    },
+    {
+      "position": 1.003636363636313,
+      "names": [
+        "finishedIntakeCube"
+      ]
+    }
+  ]
 }

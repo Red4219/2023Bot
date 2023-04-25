@@ -7,6 +7,7 @@ import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.AutoBalanceCommand;
 
+import com.swervedrivespecialties.swervelib.Mk3ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -45,7 +46,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class DrivetrainSubsystem extends SubsystemBase {
-    private static final double MAX_VOLTAGE = 12.0;
+    private static final double MAX_VOLTAGE = 10.0;
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.14528;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
             Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
@@ -132,12 +133,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
         ShuffleboardLayout layout = null;
         
+        Mk3ModuleConfiguration swerveModuleConfiguration = new Mk3ModuleConfiguration();
+        swerveModuleConfiguration.setDriveCurrentLimit(50); // current limit for drive
+
 
         frontLeftModule = Mk3SwerveModuleHelper.createNeo(
                 //shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
                         //.withSize(2, 4)
                         //.withPosition(0, 0),
                         layout,
+                        swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
@@ -150,6 +155,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         //.withSize(2, 4)
                         //.withPosition(2, 0),
                 layout,
+                swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
@@ -162,6 +168,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         //.withSize(2, 4)
                         //.withPosition(4, 0),
                 layout,
+                swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.BACK_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_LEFT_MODULE_STEER_MOTOR,
@@ -174,12 +181,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         //.withSize(2, 4)
                         //.withPosition(6, 0),
                 layout,
+                swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_ENCODER,
                 Constants.BACK_RIGHT_MODULE_STEER_OFFSET
         );
+
 
         // Create the initial versions of the SwerveModulePositions
         // They will just be updated in the future during teleop and autonomous
@@ -398,13 +407,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         limelight.periodic();
         //double[] limelightpose = limelight.getBotPose();
 
-        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION)) {
+        /*if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION)) {
                 if(this.useLimeLightForPoseCorrection) {
                         this.useLimeLightForPoseCorrection = false;
                 } else {
                         this.useLimeLightForPoseCorrection = true;
                 }
-        }
+        }*/
 
         
 

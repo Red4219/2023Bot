@@ -27,6 +27,8 @@ public class AutoFoldCommand extends CommandBase {
 
         arm.moveFold();
         this.arm.periodic();
+
+        System.out.println("AutoFoldCommand called");
     }
 
     @Override

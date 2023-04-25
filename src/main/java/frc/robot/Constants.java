@@ -55,12 +55,12 @@ public class Constants {
     public static final double ARM_HIGH_ENCODER_VALUE = -11.0;
     //public static final double ARM_HIGH_ENCODER_VALUE = -11.5;;
     //public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 1.5;
-    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 2.5;
+    public static final double ARM_HIGH_WRIST_ENCODER_VALUE = 1.7;
     public static final double ARM_HIGH_BASE_ENCODER_VALUE = 20.0;
 
     // ARM CUBE PRESET HIGH
     public static final double ARM_HIGH_ENCODER_VALUE_CUBE = -11.5;
-    public static final double ARM_HIGH_WRIST_ENCODER_VALUE_CUBE = 2.5;
+    public static final double ARM_HIGH_WRIST_ENCODER_VALUE_CUBE = 4.0;
     public static final double ARM_HIGH_BASE_ENCODER_VALUE_CUBE = 20.0;
 
     // ARM PRESET MID
@@ -80,9 +80,10 @@ public class Constants {
     public static final double ARM_LOW_BASE_ENCODER_VALUE = 24.0;
 
     // ARM PRESET LOWLOW
-    public static final double ARM_LOWLOW_ARM_ENCODER_VALUE = -2.0;
-    public static final double ARM_LOWLOW_WRIST_ENCODER_VALUE = 0.5;
-    public static final double ARM_LOWLOW_BASE_ENCODER_VALUE = 4.5;
+    //public static final double ARM_LOWLOW_ARM_ENCODER_VALUE = -0.3;
+    public static final double ARM_LOWLOW_ARM_ENCODER_VALUE = -1.5;
+    public static final double ARM_LOWLOW_WRIST_ENCODER_VALUE = 3.0;
+    public static final double ARM_LOWLOW_BASE_ENCODER_VALUE = 24.0;
     
     public enum IntakeDirection {
         IN, OUT

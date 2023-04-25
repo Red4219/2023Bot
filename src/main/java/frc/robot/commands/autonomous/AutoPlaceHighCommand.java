@@ -37,10 +37,10 @@ public class AutoPlaceHighCommand extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        if(timer.hasElapsed(1)) {
+        /*if(timer.hasElapsed(5)) {
             timer.stop();
             return true;
-        }
+        }*/
 
         return false;
 
