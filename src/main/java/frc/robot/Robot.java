@@ -1,18 +1,20 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
-import com.revrobotics.CANSparkMax;
+import org.photonvision.PhotonCamera;
 import com.revrobotics.REVPhysicsSim;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+//
+// Now that Robot is running, create an instance of RobotContainer which starts everything
+//
 
 public class Robot extends TimedRobot {
     private final RobotContainer container = new RobotContainer();
     private boolean simulation = false;
     private REVPhysicsSim simulator;
+
+    PhotonCamera camera = new PhotonCamera("photonvision");
 
     @Override
     public void teleopInit() {
