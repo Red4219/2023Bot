@@ -3,8 +3,11 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.commands.AutoAimCommand;
+import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.AutoBalanceCommand;
 
+import com.swervedrivespecialties.swervelib.Mk3ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -43,7 +46,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class DrivetrainSubsystem extends SubsystemBase {
-    private static final double MAX_VOLTAGE = 12.0;
+    private static final double MAX_VOLTAGE = 10.0;
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.14528;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
             Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0);
@@ -73,9 +76,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double tempDegrees = 180;
 
     private boolean autoAiming = false;
+    private boolean autoBalance = false;
 
     public Gyro getGyro() {
         return gyroscope;
+    }
+
+    public float getPitch() {
+        return gyroscope.getPitch();
+    }
+
+    public float getRoll() {
+        return gyroscope.getRoll();
     }
 
     public void setDriverController(XboxController controller) {
@@ -100,6 +112,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 this.driveCommand = (DriveCommand) command;
         } else if(command instanceof AutoAimCommand) {
                 
+        } else if(command instanceof AutoBalanceCommand) {
+
         }
     }
 
@@ -119,12 +133,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
         ShuffleboardLayout layout = null;
         
+        Mk3ModuleConfiguration swerveModuleConfiguration = new Mk3ModuleConfiguration();
+        swerveModuleConfiguration.setDriveCurrentLimit(50); // current limit for drive
+
 
         frontLeftModule = Mk3SwerveModuleHelper.createNeo(
                 //shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
                         //.withSize(2, 4)
                         //.withPosition(0, 0),
                         layout,
+                        swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
@@ -137,6 +155,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         //.withSize(2, 4)
                         //.withPosition(2, 0),
                 layout,
+                swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
@@ -149,6 +168,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         //.withSize(2, 4)
                         //.withPosition(4, 0),
                 layout,
+                swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.BACK_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_LEFT_MODULE_STEER_MOTOR,
@@ -161,12 +181,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         //.withSize(2, 4)
                         //.withPosition(6, 0),
                 layout,
+                swerveModuleConfiguration,
                 Mk3SwerveModuleHelper.GearRatio.MK4219,
                 Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_ENCODER,
                 Constants.BACK_RIGHT_MODULE_STEER_OFFSET
         );
+
 
         // Create the initial versions of the SwerveModulePositions
         // They will just be updated in the future during teleop and autonomous
@@ -193,6 +215,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         //System.out.println("----------> just created the odometry, poseX is: " + odometry.getPoseMeters().getX() + ", poseY is: " + odometry.getPoseMeters().getY());
 
         shuffleboardTab.addNumber("Gyroscope Angle", () -> getRotation().getDegrees());
+        shuffleboardTab.addNumber("Pitch", () -> getPitch());
+        shuffleboardTab.addNumber("Roll", () -> getRoll());
         //shuffleboardTab.addNumber("Pose X", () -> odometry.getPoseMeters().getX());
         shuffleboardTab.addNumber("Pose X", () -> poseEstimator.getEstimatedPosition().getX());
         //shuffleboardTab.addNumber("Pose Y", () -> odometry.getPoseMeters().getY());
@@ -273,7 +297,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetPose() {
-        System.out.println("------------------> resetPose() called");
+        //System.out.println("------------------> resetPose() called");
 
         /*swerveModulePositions[0].distanceMeters = frontLeftModule.getPosition();        
         swerveModulePositions[0].angle = new Rotation2d(frontLeftModule.getSteerAngle());
@@ -354,6 +378,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         //return gyroscope.getRotation2d();
     }
 
+    
+
     public void drive(ChassisSpeeds chassisSpeeds) {
         //System.out.println("---------------------> drive called");
         this.chassisSpeeds = chassisSpeeds;
@@ -381,13 +407,31 @@ public class DrivetrainSubsystem extends SubsystemBase {
         limelight.periodic();
         //double[] limelightpose = limelight.getBotPose();
 
-        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION)) {
+        /*if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION)) {
                 if(this.useLimeLightForPoseCorrection) {
                         this.useLimeLightForPoseCorrection = false;
                 } else {
                         this.useLimeLightForPoseCorrection = true;
                 }
+        }*/
+
+        
+
+        if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_AUTO_BALANCE)) {
+
+                //System.out.println("getRawButtonPressed called");
+                autoBalance = true;
         }
+
+        if(this.driverController.getRawButtonReleased(Constants.DRIVER_BUTTON_TOGGLE_AUTO_BALANCE)) {
+                autoBalance = false;
+        }
+
+        if(autoBalance) {
+                BalanceCommand balanceCommand = new BalanceCommand(this);
+                balanceCommand.execute();
+        }
+
 
         
         // Check for auto aim

@@ -1,0 +1,101 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 14.61090561136183,
+        "y": 4.398468274373438
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 13.544610272118408,
+        "y": 4.86497248528939
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "placeHighCube2",
+          "ejectCube2",
+          "fold2"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 8.593953339925683,
+        "y": 4.607919144579382
+      },
+      "prevControl": {
+        "x": 11.212089217527602,
+        "y": 4.607919144579382
+      },
+      "nextControl": {
+        "x": 11.212089217527602,
+        "y": 4.607919144579382
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 14.449057211653617,
+        "y": 4.388947780270858
+      },
+      "prevControl": {
+        "x": 11.773798369449471,
+        "y": 5.007779896794949
+      },
+      "nextControl": null,
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "placeHighCube",
+          "ejectCube",
+          "fold"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.65,
+      "names": [
+        "intakeCube"
+      ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "finishedIntakeCube"
+      ]
+    },
+    {
+      "position": 1.003636363636313,
+      "names": [
+        "finishedIntakeCube"
+      ]
+    }
+  ]
+}
