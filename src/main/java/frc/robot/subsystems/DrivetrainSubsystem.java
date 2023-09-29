@@ -9,6 +9,8 @@ import frc.robot.commands.autonomous.AutoBalanceCommand;
 
 import com.swervedrivespecialties.swervelib.Mk3ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
+import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import edu.wpi.first.math.VecBuilder;
@@ -36,6 +38,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -59,7 +63,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final AHRS gyroscope = new AHRS(SPI.Port.kMXP);
 
     //LimeLightSubSystem limelight = new LimeLightSubSystem();
-    LimeLightSubSystem limelight;
+    //LimeLightSubSystem limelight;
     SwerveModuleState[] states = new SwerveModuleState[4];
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     private final Field2d field = new Field2d();
@@ -71,7 +75,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveDrivePoseEstimator poseEstimator;
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    private double tempX = 3;
+    private double tempX = 5;
     private double tempY = 5;
     private double tempDegrees = 180;
 
@@ -133,56 +137,65 @@ public class DrivetrainSubsystem extends SubsystemBase {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Drivetrain");
         ShuffleboardLayout layout = null;
         
-        Mk3ModuleConfiguration swerveModuleConfiguration = new Mk3ModuleConfiguration();
+        //Mk3ModuleConfiguration swerveModuleConfiguration = new Mk3ModuleConfiguration();
+        Mk4ModuleConfiguration swerveModuleConfiguration = new Mk4ModuleConfiguration();
         swerveModuleConfiguration.setDriveCurrentLimit(50); // current limit for drive
 
 
-        frontLeftModule = Mk3SwerveModuleHelper.createNeo(
-                //shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
-                        //.withSize(2, 4)
-                        //.withPosition(0, 0),
-                        layout,
+        //frontLeftModule = Mk3SwerveModuleHelper.createNeo(
+        frontLeftModule = Mk4SwerveModuleHelper.createNeo(
+                shuffleboardTab.getLayout("Front Left Module", BuiltInLayouts.kList)
+                        .withSize(2, 4)
+                        .withPosition(0, 0),
+                        //layout,
                         swerveModuleConfiguration,
-                Mk3SwerveModuleHelper.GearRatio.MK4219,
+                //Mk3SwerveModuleHelper.GearRatio.MK4219,
+                Mk4SwerveModuleHelper.GearRatio.L1,
                 Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_LEFT_MODULE_STEER_MOTOR,
                 Constants.FRONT_LEFT_MODULE_STEER_ENCODER,
                 Constants.FRONT_LEFT_MODULE_STEER_OFFSET
         );
 
-        frontRightModule = Mk3SwerveModuleHelper.createNeo(
-                //shuffleboardTab.getLayout("Front Right Module", BuiltInLayouts.kList)
-                        //.withSize(2, 4)
-                        //.withPosition(2, 0),
-                layout,
+        //frontRightModule = Mk3SwerveModuleHelper.createNeo(
+        frontRightModule = Mk4SwerveModuleHelper.createNeo(
+                shuffleboardTab.getLayout("Front Right Module", BuiltInLayouts.kList)
+                        .withSize(2, 4)
+                        .withPosition(2, 0),
+                //layout,
                 swerveModuleConfiguration,
-                Mk3SwerveModuleHelper.GearRatio.MK4219,
+                //Mk3SwerveModuleHelper.GearRatio.MK4219,
+                Mk4SwerveModuleHelper.GearRatio.L1,
                 Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.FRONT_RIGHT_MODULE_STEER_MOTOR,
                 Constants.FRONT_RIGHT_MODULE_STEER_ENCODER,
                 Constants.FRONT_RIGHT_MODULE_STEER_OFFSET
         );
 
-        backLeftModule = Mk3SwerveModuleHelper.createNeo(
-                //shuffleboardTab.getLayout("Back Left Module", BuiltInLayouts.kList)
-                        //.withSize(2, 4)
-                        //.withPosition(4, 0),
-                layout,
+        //backLeftModule = Mk3SwerveModuleHelper.createNeo(
+        backLeftModule = Mk4SwerveModuleHelper.createNeo(
+                shuffleboardTab.getLayout("Back Left Module", BuiltInLayouts.kList)
+                        .withSize(2, 4)
+                        .withPosition(4, 0),
+                //layout,
                 swerveModuleConfiguration,
-                Mk3SwerveModuleHelper.GearRatio.MK4219,
+                //Mk3SwerveModuleHelper.GearRatio.MK4219,
+                Mk4SwerveModuleHelper.GearRatio.L1,
                 Constants.BACK_LEFT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_LEFT_MODULE_STEER_MOTOR,
                 Constants.BACK_LEFT_MODULE_STEER_ENCODER,
                 Constants.BACK_LEFT_MODULE_STEER_OFFSET
         );
 
-        backRightModule = Mk3SwerveModuleHelper.createNeo(
-                //shuffleboardTab.getLayout("Back Right Module", BuiltInLayouts.kList)
-                        //.withSize(2, 4)
-                        //.withPosition(6, 0),
-                layout,
+        //backRightModule = Mk3SwerveModuleHelper.createNeo(
+        backRightModule = Mk4SwerveModuleHelper.createNeo(
+                shuffleboardTab.getLayout("Back Right Module", BuiltInLayouts.kList)
+                        .withSize(2, 4)
+                        .withPosition(6, 0),
+                //layout,
                 swerveModuleConfiguration,
-                Mk3SwerveModuleHelper.GearRatio.MK4219,
+                //Mk3SwerveModuleHelper.GearRatio.MK4219,
+                Mk4SwerveModuleHelper.GearRatio.L1,
                 Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_MOTOR,
                 Constants.BACK_RIGHT_MODULE_STEER_ENCODER,
@@ -240,13 +253,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
     }
 
-    public LimeLightSubSystem getLimeLight() {
+    /*public LimeLightSubSystem getLimeLight() {
         return this.limelight;
     }
 
     public void setLimeLight(LimeLightSubSystem limelight) {
         this.limelight = limelight;
-    }
+    }*/
 
     public Pose2d getPose() {
         //System.out.println("-----------------> getPose called, x: " + odometry.getPoseMeters().getX() + ", y: " + odometry.getPoseMeters().getY());
@@ -281,6 +294,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
             },
                 pose
         );*/
+
+        Logger.getInstance().recordOutput("Odometry/Robot", pose);
 
         poseEstimator.resetPosition(
                 //pose.getRotation(),
@@ -389,7 +404,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
 
         if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_DISABLE_LED)) {
-                limelight.toggleLED();
+                //limelight.toggleLED();
         }
 
         if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_RESET_GYRO)) {
@@ -401,10 +416,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
 
         if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_MODE)) {
-                this.limelight.togglePipeline();
+                //this.limelight.togglePipeline();
         }
         
-        limelight.periodic();
+        //limelight.periodic();
         //double[] limelightpose = limelight.getBotPose();
 
         /*if(this.driverController.getRawButtonPressed(Constants.DRIVER_BUTTON_TOGGLE_LIMELIGHT_POSITION_CORRECTION)) {
@@ -442,14 +457,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
             //System.out.println(temp);
             
             //if(!autoAiming) {
-                AutoAimCommand autoAimCommand = new AutoAimCommand(
+                /*AutoAimCommand autoAimCommand = new AutoAimCommand(
                         this, 
                         () -> this.limelight.getTargetX(), 
                         () -> this.limelight.getTargetY(),
                         () -> this.limelight.getTargetRotation()
                 );
 
-                autoAimCommand.execute();
+                autoAimCommand.execute();*/
             //}
 
             autoAiming = true;
@@ -457,12 +472,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 autoAiming = false;
         }
 
-        if(limelight.canSeeTarget() && useLimeLightForPoseCorrection) {
+        /*if(limelight.canSeeTarget() && useLimeLightForPoseCorrection) {
                 //System.out.println("correcting with april tags");
                 //edu.wpi.first.wpilibj.Timer.getFPGATimestamp()                
                 //poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), limelight.getTimeStamp());
                 poseEstimator.addVisionMeasurement(limelight.getBluePose().toPose2d(), edu.wpi.first.wpilibj.Timer.getFPGATimestamp() );
-        }
+        }*/
 
         poseEstimator.updateWithTime(
                 edu.wpi.first.wpilibj.Timer.getFPGATimestamp(), 
@@ -488,6 +503,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );*/
 
         //field.setRobotPose(odometry.getPoseMeters());
+        
+        Logger.getInstance().recordOutput("Odometry/Robot", poseEstimator.getEstimatedPosition());
         field.setRobotPose(poseEstimator.getEstimatedPosition());
         var p = poseEstimator.getEstimatedPosition();
         this.states = kinematics.toSwerveModuleStates(chassisSpeeds);
@@ -496,5 +513,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
         backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
         backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+
+        //System.out.println("frontLeftModule "  + frontLeftModule.getPosition());
     }
 }

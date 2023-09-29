@@ -43,7 +43,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
     private final XboxController controller = new XboxController(0);
     private final XboxController operatorController = new XboxController(1);
-    private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
+    //private final LimeLightSubSystem limeLight = new LimeLightSubSystem();
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
     private final ArmSubsystem armSubsystem = new ArmSubsystem(operatorController);
     SendableChooser<Command> chooser = new SendableChooser<>();
@@ -57,7 +57,7 @@ public class RobotContainer {
         //drivetrain.register();
         //limeLight.register();
 
-        drivetrain.setLimeLight(limeLight);
+        //drivetrain.setLimeLight(limeLight);
 
         driveCommand = new DriveCommand(
             drivetrain,
@@ -87,9 +87,9 @@ public class RobotContainer {
         return drivetrain;
     }
 
-    public LimeLightSubSystem getLimeLightSubSystem() {
+    /*public LimeLightSubSystem getLimeLightSubSystem() {
         return limeLight;
-    }
+    }*/
 
     private static double deadband(double value, double deadband) {
         if (Math.abs(value) > deadband) {
@@ -130,13 +130,13 @@ public class RobotContainer {
             () -> this.limeLight.canSeeTarget()
         ));*/
 
-        eventMap.put("event2", new AutoAutoAimCommand(
+        /*eventMap.put("event2", new AutoAutoAimCommand(
             drivetrain, 
             () -> this.limeLight.getTargetX(), 
             () -> this.limeLight.getTargetY(), 
             () -> this.limeLight.getTargetRotation(),
             () -> this.limeLight.canSeeTarget()
-        ));
+        ));*/
 
 
         //eventMap.put("event2", new HighPositionCommand(armSubsystem));
